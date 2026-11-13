@@ -1,0 +1,34 @@
+Long-Horizon: licence for texts and the guide
+==============================================
+
+The texts of Long-Horizon are licensed under the
+
+    Creative Commons Attribution-ShareAlike 4.0 International licence (CC BY-SA 4.0)
+
+    Summary:    https://creativecommons.org/licenses/by-sa/4.0/
+    Legal code: https://creativecommons.org/licenses/by-sa/4.0/legalcode
+
+The legal code at the address above is the licence. This file is only a notice
+and does not reproduce or replace it.
+
+What counts as "texts"
+----------------------
+- the guide: docs/guide/ (its HTML source, stylesheet and illustrations) and
+  docs/Long-Horizon-Guide.pdf;
+- the human-readable texts inside the app: lessons, glossary, "How to play",
+  strategy cards, claims and the research summary in js/content/*.js;
+- the documentation: README.md, CHANGELOG.md and docs/.
+
+The program code, including the code that holds those texts, is under the MIT
+licence (see LICENSE). Third-party material keeps its own licence (see NOTICE).
+
+Attribution
+-----------
+When you share or adapt these texts, credit them like this:
+
+    Long-Horizon texts and guide © 2026 Long-Horizon contributors (Chimera community),
+    https://discord.gg/chmr, licensed under CC BY-SA 4.0
+    (https://creativecommons.org/licenses/by-sa/4.0/)
+
+Say whether you changed anything, and share your adapted texts under the same
+licence.
