@@ -1,0 +1,131 @@
+Long-Horizon (working memory trainer)
+Copyright (c) 2026 Long-Horizon contributors (Chimera community)
+Built by the Chimera community on Discord: https://discord.gg/chmr
+
+Long-Horizon's own code is under the MIT licence (LICENSE). Its texts and
+guide are under CC BY-SA 4.0 (LICENSE-CONTENT). This file lists third-party material and
+credits, with the licence terms that come with them.
+
+----------------------------------------------------------------------------
+1. Spoken letter clips (assets/audio/letters.js)
+----------------------------------------------------------------------------
+
+The eight optional spoken letters (C, H, K, L, Q, R, S, T) were synthesised
+with Flite 2.2, the small speech synthesis engine from the Language
+Technologies Institute at Carnegie Mellon University (http://cmuflite.org,
+https://github.com/festvox/flite; Ubuntu package libflite1 2.2-6build3, run
+through ffmpeg's flite source), using the voice cmu_us_slt (US English,
+female). That voice was built from the "slt" recordings of the CMU ARCTIC
+databases (http://www.festvox.org/cmu_arctic/).
+
+Credit: Spoken letters synthesised with Flite (Language Technologies Institute,
+Carnegie Mellon University; voice cmu_us_slt, CMU ARCTIC). Used under the
+Flite licence.
+
+Modifications, marked as both licences require: each clip was trimmed of
+leading and trailing silence, given one static gain (mean level about
+-20 dBFS, peak at most -1 dBFS), faded in over 5 ms and out over 15 ms,
+encoded as MP3 (40 kbps, mono, 22.05 kHz) and stored as a base64 data URI.
+The method and the script are in docs/dev/audio-notes.md. No Flite code or
+voice file ships with Long-Horizon. The names of Carnegie Mellon University
+and of the authors are not used to endorse or promote Long-Horizon.
+
+Flite licence (the main licence block of Flite's COPYING file, which covers
+the engine and its voices; reproduced unchanged):
+
+                  Language Technologies Institute
+                     Carnegie Mellon University
+                      Copyright (c) 1999-2017
+                        All Rights Reserved.
+
+  Permission is hereby granted, free of charge, to use and distribute
+  this software and its documentation without restriction, including
+  without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of this work, and to
+  permit persons to whom this work is furnished to do so, subject to
+  the following conditions:
+   1. The code must retain the above copyright notice, this list of
+      conditions and the following disclaimer.
+   2. Any modifications must be clearly marked as such.
+   3. Original authors' names are not deleted.
+   4. The authors' names are not used to endorse or promote products
+      derived from this software without specific prior written
+      permission.
+
+  CARNEGIE MELLON UNIVERSITY AND THE CONTRIBUTORS TO THIS WORK
+  DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
+  ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT
+  SHALL CARNEGIE MELLON UNIVERSITY NOR THE CONTRIBUTORS BE LIABLE
+  FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
+  AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
+  ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
+  THIS SOFTWARE.
+
+CMU ARCTIC licence (the source recordings of the cmu_us_slt voice; the
+EST-2003 terms as distributed with the CMU ARCTIC databases):
+
+                   Carnegie Mellon University
+                       Copyright (c) 2003
+                      All Rights Reserved.
+
+Permission to use, copy, modify, and licence this software and its
+documentation for any purpose, is hereby granted without fee,
+subject to the following conditions:
+ 1. The code must retain the above copyright notice, this list of
+conditions and the following disclaimer.
+ 2. Any modifications must be clearly marked as such.
+ 3. Original authors' names are not deleted.
+
+THE AUTHORS OF THIS WORK DISCLAIM ALL WARRANTIES WITH REGARD TO
+THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS, IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY
+SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
+AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
+ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
+THIS SOFTWARE.
+
+----------------------------------------------------------------------------
+2. Colours
+----------------------------------------------------------------------------
+
+The app's colours and the guide's charts use the colour-universal-design
+palette of Masataka Okabe and Kei Ito (the Okabe-Ito palette), chosen because
+people with common colour-vision differences can tell its colours apart.
+Long-Horizon never uses colour as the only cue.
+
+----------------------------------------------------------------------------
+3. Fonts in the guide PDF
+----------------------------------------------------------------------------
+
+The repository ships no font files; the app uses the fonts of your system.
+docs/Long-Horizon-Guide.pdf embeds subsets of Lora (Cyreal), Inter
+(Rasmus Andersson) and, for code, Liberation Mono, all under the SIL Open Font License
+1.1 (https://openfontlicense.org), when those fonts are installed on the
+machine that builds it (tools/build-pdf.py lists the embedded fonts).
+
+----------------------------------------------------------------------------
+4. Methods from published research
+----------------------------------------------------------------------------
+
+Task procedures were re-implemented from the method descriptions of the
+published papers, in our own words. No code, test items, figures or text were
+copied from them. The main sources: Cao, Zhang, Zhang, Zhang & Zhang 2026
+(executive n-back); Wang, Sun & Xiao 2025 (Equal Steps); Jaeggi, Buschkuehl,
+Jonides & Perrig 2008 (dual n-back); Laine, Fellman, Waris & Nyman 2018
+(n-back lures and the grouping strategy); Oberauer, Suess, Wilhelm & Wittmann
+2008, Chuderski 2014, Bateman, Thompson & Birney 2019 and Li & Birney 2026
+(relation monitoring); Unsworth, Heitz, Schrock & Engle 2005 (automated
+operation span); Jastrzebski, Ociepka & Chuderski 2023 (Graph Mapping);
+Matzen et al. 2010 (Sandia-type matrix rules); Jacobson & Truax 1991
+(reliable change). Full references are in the guide, chapter 13.
+
+Long-Horizon contains no code, configuration or statistics formats, help text,
+sounds or images from Brain Workshop (GPL) or from tools under CC BY-NC or
+AGPL licences, and no items from copyrighted tests such as Raven's matrices,
+ICAR, WAIS or LSAC.
+
+Dual n-back in Long-Horizon presents positions and sounds as two independent
+streams. Long-Horizon never asks users to pick on-screen text that matches an
+earlier spoken item (cf. US patent 8,408,915). This note is not legal advice.

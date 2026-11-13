@@ -1,0 +1,27 @@
+# Long-Horizon: fast checks on every push and pull request (no browser tests here; run tests/e2e locally, see CLAUDE.md §4).
+name: tests
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: index.html and sw.js match js/manifest.json
+        run: node tools/sync-index.mjs --check
+      - name: syntax check
+        run: for f in $(find js -name '*.js'); do node --check "$f"; done
+      - name: unit tests (generators, solvers, engine, Lab)
+        run: node tests/unit/run.mjs
+      - name: analysis tools
+        run: |
+          python -m pip install -r tools/analysis/requirements.txt
+          cd tools/analysis && python -m unittest test_analysis -v

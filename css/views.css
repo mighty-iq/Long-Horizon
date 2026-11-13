@@ -1,0 +1,344 @@
+/* Long-Horizon — task views: Relations (Equal Steps, Relation Grid, Relation Stream), Span, visual search. MIT licence.
+   Owner: P1b (js/tasks/relations/view.js, js/tasks/span/view.js, js/tasks/vsearch/view.js). Tokens: css/app.css.
+
+   Every view fills its root: .hf-v (flex column) = head (rule line / status) · stage (stimulus, centred) · pads.
+   Square stimuli (grid, search field) are --hf-v-side wide: min(stage width, --hf-v-max, 100svh − --hf-v-reserve),
+   so the grid and the pads fit on one screen without scrolling (360 px wide phones included). A caller that keeps
+   its own bar above the view can add that bar's height to --hf-v-reserve.
+   Nothing here animates; show/hide only flip visibility (no layout change), and <html data-busy> freezes the rest. */
+
+.hf-v {
+  --hf-v-max: 34rem;
+  --hf-v-reserve: 15rem;
+  --hf-v-side: min(100%, var(--hf-v-max), calc(100vh - var(--hf-v-reserve)));
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--hf-sp-4);
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100%;
+  padding: var(--hf-sp-4) var(--hf-sp-4) max(var(--hf-sp-4), env(safe-area-inset-bottom, 0px));
+  color: var(--hf-ink);
+}
+@supports (height: 100svh) {
+  .hf-v { --hf-v-side: min(100%, var(--hf-v-max), calc(100svh - var(--hf-v-reserve))); }
+}
+/* reserve = paddings + gaps + rule line (≤ 3 lines on phones, ≤ 2 on desktop) + pads (≈ 6.75rem with key caps);
+   the order key adds ≈ 4–5rem; the search field has no head */
+.hf-v.has-key { --hf-v-reserve: 21rem; }
+.hf-v--vs { --hf-v-reserve: 10.5rem; --hf-v-max: 38rem; }
+@media (min-width: 56.25em) and (hover: hover) {
+  .hf-v { --hf-v-reserve: 14rem; }
+  .hf-v.has-key { --hf-v-reserve: 20rem; }
+  .hf-v--vs { --hf-v-reserve: 10.5rem; }
+}
+.hf-v__defs { position: absolute; width: 0; height: 0; overflow: hidden; pointer-events: none; }
+.hf-v__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hf-sp-2);
+  width: 100%;
+  max-width: var(--hf-v-side);
+  margin-inline: auto;
+}
+.hf-v__rule {
+  margin: 0;
+  font-size: var(--hf-t-md);
+  line-height: 1.35;
+  font-weight: 600;
+  color: var(--hf-ink-2);
+  text-wrap: pretty;
+}
+.hf-v__rule strong { color: var(--hf-ink); font-weight: 700; }
+.hf-v__stage {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--hf-sp-4);
+  width: 100%;
+  min-height: 0;
+}
+.hf-v__pads { flex: none; width: 100%; }
+/* pads as wide as the grid / field they answer (phones: full width anyway) */
+.hf-v--grid .hf-v__pads .hf-pads,
+.hf-v--stream .hf-v__pads .hf-pads,
+.hf-v--vs .hf-v__pads .hf-pads { max-width: max(var(--hf-v-side), 20rem); }
+
+/* ---- order key (Ascending with a non-natural order) ---- */
+.hf-v__key {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--hf-sp-1) var(--hf-sp-3);
+  padding: var(--hf-sp-2) var(--hf-sp-3);
+  border-radius: var(--hf-r-md);
+  background: var(--hf-sunken);
+  color: var(--hf-ink-2);
+  font-size: var(--hf-t-sm);
+}
+.hf-v__keylabel { font-weight: 600; color: var(--hf-ink); white-space: nowrap; }
+.hf-v__keylist { display: flex; flex-wrap: nowrap; gap: 0.375rem; margin: 0; padding: 0; list-style: none; }
+.hf-v__keylist li { display: flex; flex-direction: column; align-items: center; gap: 0.1875rem; min-width: 1.75rem; color: var(--hf-ink); }
+.hf-v__keylist .hf-sym--g svg { width: 1.625rem; height: 1.625rem; }
+.hf-v__keylist .hf-sym--c { width: 1.5rem; height: 1.5rem; }
+.hf-v__rank { font-size: var(--hf-t-xs); line-height: 1; color: var(--hf-ink-3); font-variant-numeric: tabular-nums; }
+@media (max-width: 23.75em) {
+  .hf-v__keylist { gap: 0.25rem; }
+  .hf-v__keylist li { min-width: 1.5rem; }
+  .hf-v__keylist .hf-sym--g svg { width: 1.4rem; height: 1.4rem; }
+}
+
+/* ---- symbols (grid cells, order key) ---- */
+.hf-sym { display: block; flex: none; }
+.hf-sym svg { display: block; max-width: none; overflow: visible; }
+.hf-sym--t { text-align: center; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.hf-sym--c {
+  border-radius: 22%;
+  background-color: var(--hf-col, #888);
+  box-shadow: inset 0 0 0 1.5px rgba(15, 42, 58, 0.55);
+  forced-color-adjust: none;
+}
+.hf-col-0 { background-image: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0 26%, transparent 29%); background-size: 34% 34%; background-position: center; }
+.hf-col-2 { background-image: repeating-linear-gradient(0deg, rgba(15, 42, 58, 0.55) 0 2px, transparent 2px 6px); }
+.hf-col-3 { background-image: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.75) 0 2px, transparent 2px 6px); }
+.hf-col-4 { background-image: repeating-linear-gradient(45deg, rgba(15, 42, 58, 0.55) 0 2px, transparent 2px 6px); }
+.hf-col-5 { background-image: conic-gradient(rgba(255, 255, 255, 0.7) 25%, transparent 0 50%, rgba(255, 255, 255, 0.7) 0 75%, transparent 0); background-size: 40% 40%; }
+.hf-col-6 { background-image: radial-gradient(circle, rgba(15, 42, 58, 0.7) 0 22%, transparent 25%); background-size: 30% 30%; }
+.hf-col-7 { background-image: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.7) 0 2px, transparent 2px 7px), repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.7) 0 2px, transparent 2px 7px); }
+
+/* ---- Relation Grid / Stream ---- */
+.hf-rg {
+  --hf-rg-sym: 1.75rem;
+  --hf-rg-text: 1.875rem;
+  --hf-rg-one: 4rem;
+  --hf-rg-gap: 0.25rem;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: 2px;
+  box-sizing: border-box;
+  width: var(--hf-v-side);
+  aspect-ratio: 1 / 1;
+  border: 2px solid var(--hf-line-strong);
+  border-radius: var(--hf-r-lg);
+  background: var(--hf-line);
+  overflow: hidden;
+  container-type: inline-size;
+}
+.hf-rg--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(4, minmax(0, 1fr)); }
+@supports (width: 1cqw) {
+  .hf-rg { --hf-rg-sym: 8.4cqw; --hf-rg-text: 9.4cqw; --hf-rg-one: 19cqw; --hf-rg-gap: 0.9cqw; }
+  .hf-rg--4 { --hf-rg-sym: 6.2cqw; --hf-rg-text: 7cqw; --hf-rg-gap: 0.6cqw; }
+}
+.hf-rg__cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  background: var(--hf-raised);
+}
+.hf-rg__in { grid-area: 1 / 1; display: flex; align-items: center; justify-content: center; min-width: 0; }
+.hf-rg.is-off .hf-rg__in,
+.hf-rg__in.is-hid { visibility: hidden; }
+.hf-rg__str { display: flex; align-items: center; justify-content: center; gap: var(--hf-rg-gap); }
+.hf-rg .hf-sym--t { font-size: var(--hf-rg-text); width: 0.64em; }
+/* letters: slots wide enough for M; a touch smaller so three still fit a 4×4 cell */
+.hf-rg[data-variant="letters"] .hf-sym--t { width: 0.9em; font-size: calc(var(--hf-rg-text) * 0.9); }
+/* dot groups sit on die-face tiles so the three groups of a string never run together */
+.hf-rg[data-variant="dots"] .hf-rg__str { gap: calc(var(--hf-rg-gap) * 1.6); }
+.hf-rg[data-variant="dots"] .hf-sym--g { border-radius: 20%; background: var(--hf-sunken); }
+.hf-v__keylist .hf-sym--g { border-radius: 20%; }
+.hf-rg[data-variant="glyphs"] { --hf-rg-sym: 2rem; }
+@supports (width: 1cqw) {
+  .hf-rg[data-variant="glyphs"].hf-rg--3 { --hf-rg-sym: 9.2cqw; }
+}
+.hf-rg .hf-sym--g svg { width: var(--hf-rg-sym); height: var(--hf-rg-sym); }
+.hf-rg .hf-sym--c { width: var(--hf-rg-sym); height: var(--hf-rg-sym); }
+.hf-rg .hf-rg__one .hf-sym--g svg { width: var(--hf-rg-one); height: var(--hf-rg-one); }
+.hf-halo { fill: none; stroke: var(--hf-raised); stroke-width: 17px; stroke-linecap: round; stroke-linejoin: round; }
+.hf-rg__cell.is-mark { background: var(--hf-tint-blue); box-shadow: inset 0 0 0 3px var(--hf-sel); }
+.hf-rg__cell.is-mark .hf-halo { stroke: var(--hf-raised); }
+/* tutorial assist: the two irrelevant symbols are dimmed, the relevant one is underlined */
+.hf-rg--hl .hf-sym { opacity: 0.3; }
+.hf-rg--hl[data-rel="0"] .hf-sym[data-p="0"],
+.hf-rg--hl[data-rel="1"] .hf-sym[data-p="1"],
+.hf-rg--hl[data-rel="2"] .hf-sym[data-p="2"] { opacity: 1; box-shadow: 0 0.2rem 0 0 var(--hf-sel); }
+.hf-v--static { min-height: 0; padding: 0; display: block; }
+.hf-v--static .hf-rg { --hf-v-side: min(100%, 22rem); }
+
+/* ---- Equal Steps ---- */
+.hf-es { display: flex; flex-direction: column; align-items: center; gap: var(--hf-sp-6); width: 100%; }
+.hf-es__num {
+  display: grid;
+  place-items: center;
+  font-size: clamp(5rem, 24vmin, 10rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.hf-es__num::before { content: '88'; grid-area: 1 / 1; visibility: hidden; }
+.hf-es__v { grid-area: 1 / 1; }
+.hf-es__v.is-hid,
+.hf-es__tbuf.is-hid { visibility: hidden; }
+.hf-es__tape { display: grid; min-height: 6.25rem; }
+.hf-es__tbuf { grid-area: 1 / 1; display: flex; justify-content: center; }
+.hf-es__list { display: flex; gap: var(--hf-sp-2); margin: 0; padding: 0; list-style: none; }
+.hf-es__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 4.5rem;
+  padding: var(--hf-sp-2) var(--hf-sp-3) var(--hf-sp-2);
+  border: 2px solid var(--hf-line);
+  border-radius: var(--hf-r-md);
+  background: var(--hf-raised);
+}
+.hf-es__item.is-partner { border-style: dashed; border-color: var(--hf-ink-2); }
+.hf-es__n { font-size: var(--hf-t-3xl); font-weight: 700; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.hf-es__s { font-size: var(--hf-t-sm); color: var(--hf-ink-2); white-space: nowrap; }
+.hf-es__item.is-last .hf-es__s { color: var(--hf-ink); font-weight: 700; }
+@media (max-width: 23.75em) {
+  .hf-es__item { min-width: 3.75rem; padding-inline: var(--hf-sp-2); }
+  .hf-es__n { font-size: var(--hf-t-2xl); }
+}
+
+/* ---- visual search ----
+   The SVG viewBox is the 100-unit field itself, so the box width is the field width: never below spec.field.minFieldPx
+   (--hf-vs-min, 360 px; a 360 px phone gets the full width, the box then spills into the view's side padding, centred,
+   never past the screen). No border (it would eat field width): an inset hairline marks the edge. */
+.hf-vs {
+  flex: none;
+  box-sizing: border-box;
+  width: max(min(var(--hf-vs-min, 360px), 100vw), var(--hf-v-side));
+  aspect-ratio: 1 / 1;
+  border-radius: var(--hf-r-md);
+  background: var(--hf-raised);
+  box-shadow: inset 0 0 0 1px var(--hf-line-strong);
+  color: var(--hf-ink);
+}
+.hf-vs svg { display: block; width: 100%; height: 100%; max-width: none; }
+.hf-vs__items path { fill: none; stroke: currentColor; stroke-width: 1px; stroke-linecap: butt; stroke-linejoin: miter; }
+.hf-vs__fix path { fill: none; stroke: var(--hf-ink-2); stroke-width: 0.7px; stroke-linecap: round; }
+@media (max-width: 23.75em) {
+  .hf-vs { border-radius: 0; }
+}
+.hf-vs.is-off .hf-vs__items,
+.hf-vs:not(.is-off) .hf-vs__fix { visibility: hidden; }
+
+/* ---- complex span ---- */
+.hf-v--span .hf-v__head { max-width: 28rem; }
+.hf-sp__status { margin: 0; font-size: var(--hf-t-sm); color: var(--hf-ink-3); font-variant-numeric: tabular-nums; }
+.hf-sp__timed { display: grid; place-items: center; width: 100%; min-height: 11rem; }
+.hf-sp__judge,
+.hf-sp__mem { grid-area: 1 / 1; display: flex; flex-direction: column; align-items: center; gap: var(--hf-sp-3); text-align: center; }
+.hf-sp__judge.is-hid,
+.hf-sp__mem.is-hid { visibility: hidden; }
+.hf-sp__eq {
+  margin: 0;
+  font-size: clamp(2.75rem, 12vmin, 5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.hf-sp__q { margin: 0; font-size: var(--hf-t-lg); color: var(--hf-ink-2); }
+.hf-sp__memv { font-size: clamp(5.5rem, 26vmin, 10rem); font-weight: 700; line-height: 1; }
+.hf-sp__recall {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hf-sp-4);
+  width: 100%;
+  max-width: 28rem;
+}
+.hf-sp__rtitle { margin: 0; font-size: var(--hf-t-lg); font-weight: 600; line-height: 1.35; }
+.hf-sp__rtitle:focus,
+.hf-sp__mtitle:focus { outline: none; }
+.hf-sp__slots { display: flex; flex-wrap: wrap; gap: var(--hf-sp-2); margin: 0; padding: 0; list-style: none; min-height: 3rem; }
+.hf-sp__slot {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 3rem;
+  box-sizing: border-box;
+  border: 2px solid var(--hf-line);
+  border-radius: var(--hf-r-sm);
+  background: var(--hf-sunken);
+  font-size: var(--hf-t-xl);
+  font-weight: 700;
+}
+.hf-sp__slot.is-full { background: var(--hf-raised); border-color: var(--hf-line-strong); }
+.hf-sp__slot.is-blank { color: var(--hf-ink-3); }
+.hf-sp__slot.is-next { border-style: dashed; border-color: var(--hf-sel); background: var(--hf-raised); }
+.hf-sp__keys { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--hf-sp-2); }
+.hf-sp__key {
+  min-height: 3.25rem;
+  padding: 0;
+  border: 2px solid var(--hf-line-strong);
+  border-radius: var(--hf-r-md);
+  background: var(--hf-raised);
+  color: var(--hf-ink);
+  font: 700 var(--hf-t-xl)/1 var(--hf-font);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.hf-sp__key:active { box-shadow: inset 0 0.2rem 0 rgba(0, 0, 0, 0.2); filter: brightness(0.94); }
+.hf-sp__key:focus-visible,
+.hf-sp__act:focus-visible { outline: 3px solid var(--hf-focus); outline-offset: 2px; }
+.hf-sp__acts { display: grid; grid-template-columns: 1fr 1fr 1.35fr; gap: var(--hf-sp-2); }
+.hf-sp__act { min-height: 3rem; }
+.hf-v--span.is-recall .hf-v__pads { display: none; }
+.hf-v--span.is-paused .hf-v__pads { visibility: hidden; }
+.hf-sp__msg { display: flex; flex-direction: column; align-items: center; gap: var(--hf-sp-3); max-width: 26rem; text-align: center; }
+.hf-sp__mtitle { margin: 0; font-size: var(--hf-t-2xl); font-weight: 700; line-height: 1.25; }
+.hf-sp__mtext { margin: 0; color: var(--hf-ink-2); }
+.hf-sp__macts { justify-content: center; margin-top: var(--hf-sp-2); }
+
+/* ---- landscape phones (wide and short; Phase 4, PQ-12) ----
+   The square stimuli (Relation Grid, Relation Stream, the search field) sit at the left and use the height; the rule
+   and the pads stand beside them. Before, the rule and the pads took the height and the grid shrank to ~150 × 80 px
+   with a 4-line rule. Equal Steps, Span and n-back keep their single column (they fit). The search field keeps its
+   360 px minimum; the task layer's chip and pause button float beside it (css/tasks.css). */
+@media (orientation: landscape) and (max-height: 32em) {
+  .hf-v.hf-v--grid, .hf-v.hf-v--stream, .hf-v.hf-v--vs {   /* two classes: beats .hf-v.has-key's reserve */
+    --hf-v-reserve: 5rem;          /* the top bar and paddings only: rule and pads are beside the stimulus */
+    --hf-v-side: min(var(--hf-v-max), calc(100vh - var(--hf-v-reserve)));
+    display: grid;
+    grid-template-columns: var(--hf-v-side) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+    grid-template-areas: "stage head" "stage pads";
+    align-items: end;
+    gap: var(--hf-sp-3) var(--hf-sp-5);
+    padding-block: var(--hf-sp-2);
+  }
+  .hf-v.hf-v--vs {
+    --hf-v-reserve: 1.75rem;       /* no top bar above it (it floats) and thin paddings */
+    grid-template-columns: max(min(var(--hf-vs-min, 360px), 100vw), var(--hf-v-side)) minmax(0, 1fr);
+    padding-block: 0.25rem;
+  }
+  @supports (height: 100svh) {
+    .hf-v.hf-v--grid, .hf-v.hf-v--stream, .hf-v.hf-v--vs { --hf-v-side: min(var(--hf-v-max), calc(100svh - var(--hf-v-reserve))); }
+  }
+  .hf-v--grid .hf-v__head, .hf-v--stream .hf-v__head { grid-area: head; max-width: none; margin: 0; }
+  .hf-v--grid .hf-v__stage, .hf-v--stream .hf-v__stage, .hf-v--vs .hf-v__stage { grid-area: stage; align-self: center; }
+  .hf-v--grid .hf-v__pads, .hf-v--stream .hf-v__pads, .hf-v--vs .hf-v__pads { grid-area: pads; }
+  .hf-v--grid .hf-v__pads .hf-pads, .hf-v--stream .hf-v__pads .hf-pads, .hf-v--vs .hf-v__pads .hf-pads { max-width: none; }
+}
+
+/* ---- forced colours: stimuli are drawn in currentColor; keep frames visible ---- */
+@media (forced-colors: active) {
+  .hf-rg { background: CanvasText; border-color: CanvasText; }
+  .hf-rg__cell { background: Canvas; }
+  .hf-rg__cell.is-mark { outline: 3px solid Highlight; outline-offset: -3px; }
+  .hf-vs, .hf-es__item, .hf-sp__slot, .hf-sp__key { border-color: CanvasText; }
+  .hf-halo { stroke: Canvas; }
+}

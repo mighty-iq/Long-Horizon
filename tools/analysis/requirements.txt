@@ -1,0 +1,8 @@
+# Long-Horizon study analysis (tools/analysis). Python >= 3.9.
+# Tested 6 Nov 2026 with Python 3.13, numpy 2.5.3, pandas 3.0.5, scipy 1.18.1, statsmodels 0.15.0, pingouin 0.7.0.
+numpy>=1.24
+pandas>=2.0
+scipy>=1.10
+statsmodels>=0.14
+# optional: analyze.py does not need it; test_analysis.py uses it to cross-check TOST and the JZS Bayes factor
+pingouin>=0.5
