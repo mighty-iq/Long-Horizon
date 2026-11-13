@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en" data-theme="system">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Long-Horizon style guide</title>
+<link rel="stylesheet" href="../../css/app.css">
+<style>
+  /* Style-guide-only layout (not part of the app) */
+  .sg { display: flex; flex-direction: column; gap: 0; max-width: 60rem; }
+  .sg-head { display: flex; flex-direction: column; gap: .75rem; padding-bottom: 2rem; }
+  .sg-tools { display: flex; flex-direction: column; gap: 1rem; padding: 1rem 1.25rem; border: 1px solid var(--hf-line); border-radius: var(--hf-r-lg); background: var(--hf-surface); }
+  .sg-tools .hf-toggle { max-width: 22rem; }
+  .sg-tools__row { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; align-items: center; }
+  .sg-section { display: flex; flex-direction: column; gap: 1rem; padding: 2.25rem 0 0; margin-top: 2.25rem; border-top: 1px solid var(--hf-line); min-width: 0; }
+  .sg-section > h2 { font-size: var(--hf-t-xl); font-weight: 700; letter-spacing: -.01em; }
+  .sg-note { color: var(--hf-ink-2); font-size: var(--hf-t-sm); max-width: 40rem; }
+  .sg-note code, .sg-code { font-family: var(--hf-mono); font-size: .8125rem; background: var(--hf-sunken); padding: .0625rem .3125rem; border-radius: 4px; overflow-wrap: anywhere; }
+  .sg-label { font-size: var(--hf-t-xs); color: var(--hf-ink-3); margin-bottom: .375rem; }
+  .sg-swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.25rem), 1fr)); gap: .625rem; }
+  .sg-swatch { border: 1px solid var(--hf-line); border-radius: var(--hf-r-md); overflow: hidden; background: var(--hf-surface); min-width: 0; }
+  .sg-swatch__chip { height: 2.75rem; border-bottom: 1px solid var(--hf-line); }
+  .sg-swatch__meta { padding: .5rem .625rem .625rem; font-size: var(--hf-t-xs); line-height: 1.35; }
+  .sg-swatch__meta b { display: block; font-size: var(--hf-t-sm); }
+  .sg-swatch__meta span { color: var(--hf-ink-3); font-family: var(--hf-mono); }
+  .sg-type { display: flex; flex-direction: column; gap: .5rem; }
+  .sg-type__row { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); gap: 1rem; align-items: baseline; padding: .375rem 0; border-bottom: 1px solid var(--hf-line); }
+  .sg-type__row > span:first-child { font-size: var(--hf-t-xs); color: var(--hf-ink-3); font-variant-numeric: tabular-nums; }
+  .sg-cols { display: grid; gap: 1rem; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 40em) { .sg-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .sg-split { display: grid; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 70em) { .sg-split { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .sg-col { background: var(--hf-bg); color: var(--hf-ink); padding: 1.5rem 1.25rem 2.5rem; min-width: 0; }
+  .sg-col > .sg-coltitle { font-weight: 700; font-size: var(--hf-t-lg); }
+  .sg-modal-preview { position: relative; padding: 2rem 1rem; border-radius: var(--hf-r-lg); background: rgba(9, 26, 37, .55); display: grid; place-items: center; }
+  .sg-modal-preview .hf-modal { position: static; display: block; margin: 0; box-shadow: var(--hf-shadow); animation: none; }
+  .sg-toast-preview { display: flex; flex-direction: column; align-items: flex-start; gap: .5rem; }
+  .sg-toast-preview .hf-toasts { position: static; pointer-events: auto; align-items: flex-start; }
+  .sg-taskbox { display: flex; flex-direction: column; gap: 1rem; padding: 1rem; border-radius: var(--hf-r-lg); background: var(--hf-bg); border: 1px dashed var(--hf-line-strong); }
+  .sg-today { display: grid; gap: 1rem; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 64em) { .sg-today { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); align-items: start; } }
+  .sg-col .sg-today { grid-template-columns: minmax(0, 1fr); }
+</style>
+<script>
+  // ?core=1 loads the core DOM layer first, to test the components against HF.dom.el / HF.dom.modal.
+  if (/[?&]core=1/.test(location.search)) document.write('<script src="../../js/core/util.js"><\/script><script src="../../js/core/dom.js"><\/script>');
+</script>
+<script src="../../js/ui/components.js"></script>
+<script src="../../js/ui/shell.js"></script>
+<script src="../../js/ui/chimera.js"></script>
+</head>
+<body>
+<script>
+(function () {
+  'use strict';
+  var c = HF.ui.c, h = c.h;
+  var q = {};
+  location.search.replace(/^\?/, '').split('&').forEach(function (kv) { if (kv) { var p = kv.split('='); q[decodeURIComponent(p[0])] = decodeURIComponent(p[1] || '1'); } });
+
+  var settings = { theme: q.theme || 'system', largeText: q.text === 'large', leftHanded: q.hand === 'left', reducedMotion: q.motion === 'reduce' ? true : null, focusMode: q.focus === '1' };
+  HF.ui.shell.applySettings(settings);
+  HF.ui.shell.mount(document.body, { active: q.route || 'today' });
+  if (q.bare === '1') HF.ui.shell.chrome(false);
+  var screen = HF.ui.shell.screen();
+
+  function section(title, note, kids) {
+    return h('section', { 'class': 'sg-section', 'aria-label': title }, [
+      h('h2', null, [title]),
+      note ? h('p', { 'class': 'sg-note' }, [note]) : null
+    ].concat(kids));
+  }
+  function label(t) { return h('p', { 'class': 'sg-label' }, [t]); }
+
+  /* ---------- controls (page theme, settings, overlays) ---------- */
+  function tools() {
+    var redraw = function () { HF.ui.shell.applySettings(settings); };
+    return h('div', { 'class': 'sg-tools' }, [
+      c.segmented({ legend: 'Theme', name: 'sg-theme', value: settings.theme, options: [
+        { value: 'system', label: 'System' }, { value: 'light', label: 'Light' }, { value: 'dark', label: 'Dark' }
+      ], onChange: function (v) { settings.theme = v; redraw(); } }),
+      h('div', { 'class': 'sg-tools__row' }, [
+        c.toggle({ label: 'Large text', checked: settings.largeText, onChange: function (v) { settings.largeText = v; redraw(); } }),
+        c.toggle({ label: 'Left-handed pads', checked: settings.leftHanded, onChange: function (v) { settings.leftHanded = v; redraw(); } }),
+        c.toggle({ label: 'Focus mode', hint: 'Hides rings, meters and badges', checked: settings.focusMode, onChange: function (v) { settings.focusMode = v; redraw(); } })
+      ]),
+      h('div', { 'class': 'hf-actions' }, [
+        c.button('Show the Chimera pop-up', { variant: 'secondary', icon: 'people', onClick: function () {
+          HF.ui.chimera._reset();
+          HF.ui.chimera.show();
+        } }),
+        c.button('Show a toast', { variant: 'secondary', onClick: function () { toast('Copied to the clipboard'); } }),
+        c.button('Hide navigation for 4 s', { variant: 'quiet', onClick: function () {
+          HF.ui.shell.chrome(false);
+          setTimeout(function () { HF.ui.shell.chrome(true); }, 4000);
+        } })
+      ])
+    ]);
+  }
+  function toast(text) {
+    if (HF.dom && HF.dom.toast) { HF.dom.toast(text); return; }
+    var t = h('div', { 'class': 'hf-toast' }, [text]);
+    document.getElementById('hf-toasts').appendChild(t);
+    setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 3000);
+  }
+
+  /* ---------- sections ---------- */
+  var TOKENS = [
+    ['--hf-bg', 'Page'], ['--hf-surface', 'Surface'], ['--hf-raised', 'Raised'], ['--hf-sunken', 'Sunken'],
+    ['--hf-line', 'Hairline'], ['--hf-line-strong', 'Control line'], ['--hf-ink', 'Ink'], ['--hf-ink-2', 'Ink 2'],
+    ['--hf-ink-3', 'Ink 3 (muted)'], ['--hf-accent', 'Go key (orange)'], ['--hf-sel', 'Blue: select, focus'], ['--hf-track', 'Track'],
+    ['--hf-good', 'Good (bluish green)'], ['--hf-warn', 'Warn'], ['--hf-bad', 'Danger (vermillion)'], ['--hf-deep', 'Instrument panel'],
+    ['--hf-s1', 'Chart slot 1'], ['--hf-s2', 'Chart slot 2'], ['--hf-s3', 'Chart slot 3'], ['--hf-s-muted', 'Chart muted']
+  ];
+  function swatches(scope) {
+    var wrap = h('div', { 'class': 'sg-swatches' });
+    TOKENS.forEach(function (t) {
+      var chip = h('div', { 'class': 'sg-swatch__chip' });
+      chip.style.background = 'var(' + t[0] + ')';
+      var val = h('span', null, ['']);
+      wrap.appendChild(h('div', { 'class': 'sg-swatch' }, [chip, h('div', { 'class': 'sg-swatch__meta' }, [h('b', null, [t[1]]), val, h('br'), h('span', null, [t[0]])])]));
+      requestAnimationFrame(function () { val.textContent = getComputedStyle(chip).getPropertyValue(t[0]).trim(); });
+    });
+    return wrap;
+  }
+
+  function typeScale() {
+    var rows = [
+      ['48 / 3rem', 'hf-t-4xl', '86%', 700],
+      ['36 / 2.25rem', 'hf-t-3xl', 'Progress', 700],
+      ['24 / 1.5rem', 'hf-t-2xl', 'Press when the letter matches 2 back.', 600],
+      ['21 / 1.3125rem', 'hf-t-xl', 'You caught 5 of 6 matches and pressed once when there was none.', 600],
+      ['18 / 1.125rem', 'hf-t-lg', 'Lead text and card titles. Calm, plain, one idea per line.', 500],
+      ['16 / 1rem', 'hf-t-md', 'Body text. Long-Horizon trains updating, manipulation and relational integration, and measures what transfers in the Lab.', 400],
+      ['14 / .875rem', 'hf-t-sm', 'Labels, captions and chips.', 400],
+      ['12 / .75rem', 'hf-t-xs', 'Axis ticks and fine print, never smaller.', 400]
+    ];
+    return h('div', { 'class': 'sg-type' }, rows.map(function (r) {
+      var s = h('span', null, [r[2]]);
+      s.style.fontSize = 'var(--' + r[1] + ')'; s.style.fontWeight = r[3]; s.style.lineHeight = '1.25';
+      if (r[3] === 700) s.style.letterSpacing = '-0.02em';
+      return h('div', { 'class': 'sg-type__row' }, [h('span', null, [r[0]]), s]);
+    }));
+  }
+
+  function steps14(curIdx) {
+    var plan = [['Warm-up: Plain 2-back', 'Warm-up', 'warmup'], ['Plain 3-back', 'N-back'], ['Grid, Same', 'Relations'], ['Transform 2-back', 'N-back'], ['Grid, Same', 'Relations'],
+      ['Plain 3-back', 'N-back'], ['Equal Steps 1-back', 'Relations'], ['Transform 2-back', 'N-back'], ['Grid, Ascending', 'Relations'], ['Plain 3-back fast', 'N-back'],
+      ['Grid, Same', 'Relations'], ['Transform 2-back', 'N-back'], ['Equal Steps 1-back', 'Relations'], ['Plain 3-back', 'N-back']];
+    return plan.map(function (p, i) {
+      return { label: p[0], group: i === 0 ? 'Warm-up' : 'Mixed blocks', kind: p[2] || 'block', state: curIdx < 0 ? 'todo' : i < curIdx ? 'done' : i === curIdx ? 'current' : 'todo' };
+    });
+  }
+
+  function todayDemo() {
+    var hero = c.card({
+      tone: 'feature', title: 'Session 7', level: 3,
+      sub: 'Varied training, about 25 minutes',
+      body: [
+        h('p', { 'class': 'hf-soft' }, ['A warm-up, then n-back and relation blocks in turn. Transform is new today and gets a short lesson first.']),
+        h('div', { 'class': 'hf-row', style: '--hf-gap:.5rem' }, [
+          c.levelChip({ family: 'nback', name: 'Plain', level: '3-back' }),
+          c.levelChip({ family: 'nback', name: 'Transform', level: '2-back' }),
+          c.levelChip({ family: 'relations', name: 'Grid', level: 'Same, 5.5 s' })
+        ]),
+        c.sessionBar({ steps: steps14(-1), title: '14 blocks', now: 'Not started' })
+      ],
+      actions: [
+        c.button('Start session', { variant: 'primary', size: 'lg', kbd: 'Space' }),
+        c.button('Change training style', { variant: 'quiet', go: 'settings' })
+      ]
+    });
+    var side = h('div', { 'class': 'hf-stack' }, [
+      c.card({ body: [c.weeklyRing({ done: 2, target: 4 })] }),
+      c.notice({ tone: 'info', title: 'Baseline 2 is due', text: 'About 50 minutes. Pick a quiet time of day you can repeat.', action: [c.button('Open the Lab', { variant: 'secondary', size: 'sm', go: 'lab' })] })
+    ]);
+    return h('div', { 'class': 'sg-today' }, [hero, side]);
+  }
+
+  function components(scopeName) {
+    var out = [];
+    out.push(section('Today, composed', 'The instrument panel: the one feature card on a screen. Inside it every token is re-themed, so buttons, chips and the session bar adapt. One orange key per screen.', [todayDemo()]));
+
+    out.push(section('Buttons', 'Primary is the orange "go" key, one per screen. Secondary for alternatives, quiet for low-weight actions, danger for loss of data. All are at least 44 px tall.', [
+      h('div', { 'class': 'hf-actions' }, [
+        c.button('Start training', { variant: 'primary' }),
+        c.button('Measure first', { variant: 'secondary' }),
+        c.button('How to play', { variant: 'quiet' }),
+        c.button('Reset all data', { variant: 'danger' })
+      ]),
+      h('div', { 'class': 'hf-actions' }, [
+        c.button('Continue', { variant: 'primary', kbd: 'Space' }),
+        c.button('Export', { variant: 'secondary', icon: 'download' }),
+        c.button('Pause', { variant: 'secondary', icon: 'pause', iconOnly: true }),
+        c.button('Delete', { variant: 'danger', solid: true }),
+        c.button('Small', { variant: 'secondary', size: 'sm' }),
+        c.button('Not yet', { variant: 'secondary', disabled: true })
+      ]),
+      c.button('Start session 7', { variant: 'primary', size: 'lg', block: true })
+    ]));
+
+    out.push(section('Cards and lists', 'Hairlines, no drop shadows. Radius grows with hierarchy: controls 8, tiles 12, cards 18, panels and dialogs 24.', [
+      h('div', { 'class': 'sg-cols' }, [
+        c.card({ title: 'Relation Grid', sub: 'Tier 2 of 8, step R4', body: [h('p', null, ['Find the row or column whose symbols climb in order. Next tier opens at step R6.'])], actions: [c.button('Practise', { variant: 'secondary', size: 'sm' })] }),
+        c.card({ tone: 'inset', title: 'Why this order?', body: [h('p', { 'class': 'hf-soft' }, ['New tasks start blocked, then rotate, then mix at random. That order helps you learn first and transfer later.'])] })
+      ]),
+      c.list([
+        { title: 'The n-back lesson', sub: 'About 6 minutes, play to learn', icon: 'learn', go: 'learn' },
+        { title: 'Untimed practice', sub: 'Self-paced, with the memory tape', icon: 'tap', go: 'practice', meta: 'Any task' },
+        { title: 'Glossary', sub: 'Match, lure, balanced accuracy, noise band', icon: 'book', go: 'learn' },
+        { title: 'Chimera Discord', sub: 'Share progress and join community studies', icon: 'people', href: 'https://discord.gg/chmr' }
+      ])
+    ]));
+
+    out.push(section('Stat tiles and level chips', 'Lifetime counters never reset. Values use proportional figures; tables and axes use tabular figures.', [
+      c.stats([
+        { label: 'Sessions', value: 12 },
+        { label: 'Minutes', value: 286, note: 'since 3 Nov' },
+        { label: 'Blocks', value: 164 },
+        { label: 'Best n-back', value: '4-back', note: 'Transform' }
+      ]),
+      h('div', { 'class': 'hf-row' }, [
+        c.levelChip({ family: 'nback', name: 'Plain', level: '3-back, fast' }),
+        c.levelChip({ family: 'nback', name: 'Dual', level: '2-back' }),
+        c.levelChip({ family: 'relations', name: 'Equal Steps', level: '2-back to 19' }),
+        c.levelChip({ family: 'span', name: 'Span', level: 'operation, 5' }),
+        c.levelChip({ family: 'vsearch', name: 'Visual search', level: 'set 16' }),
+        c.levelChip({ family: 'lab', name: 'Lab', level: 'Baseline 2' })
+      ]),
+      h('div', { 'class': 'hf-row' }, [c.chip('Experimental', { tone: 'warn' }), c.chip('New', { tone: 'blue' }), c.chip('Passed', { tone: 'good', icon: 'check' }), c.chip('Locked', { tone: 'outline', icon: 'lock' })])
+    ]));
+
+    out.push(section('Session bar', 'One segment per block. Done blocks fill blue, the current block is taller and orange, warm-up blocks are hatched. Group labels show when a group spans three or more blocks.', [
+      c.sessionBar({ steps: steps14(4) }),
+      c.sessionBar({ unit: 'Test', label: 'Lab visit progress', steps: [
+        { label: 'N-back probe', state: 'done' }, { label: 'Relation probe', state: 'done' }, { label: 'Spatial span', state: 'current' }, { label: 'Updating', state: 'todo' }
+      ] })
+    ]));
+
+    out.push(section('Weekly ring', 'Sessions this week against your own target. It counts up and never shows a loss: no missed days, no broken streaks.', [
+      h('div', { 'class': 'sg-cols' }, [
+        c.weeklyRing({ done: 0, target: 4 }),
+        c.weeklyRing({ done: 2, target: 4 }),
+        c.weeklyRing({ done: 4, target: 4 }),
+        c.weeklyRing({ done: 6, target: 5, title: 'This week' })
+      ]),
+      h('div', { 'class': 'hf-row' }, [c.weeklyRing({ done: 1, target: 3, size: 'sm', compact: true }), c.weeklyRing({ done: 3, target: 3, size: 'sm', compact: true })])
+    ]));
+
+    out.push(section('Zone meter', 'The last three block scores against the step-down and step-up lines of the current training style. Mastery Path shows a single "counts" line instead.', [
+      h('div', { 'class': 'sg-cols' }, [
+        c.zoneMeter({ title: 'Transform', scores: [0.68, 0.81, 0.9], down: 0.73, up: 0.87, summary: 'Latest block steps up' }),
+        c.zoneMeter({ title: 'Relation Grid', scores: [0.79, 0.84, 0.76], down: 0.73, up: 0.87, summary: 'Holding at Same, 5.5 s' }),
+        c.zoneMeter({ title: 'Plain, Stretch', scores: [0.58, 0.71, 0.66], down: 0.64, up: 0.80, summary: 'In the zone' }),
+        c.zoneMeter({ title: 'Equal Steps, Mastery Path', mode: 'mastery', qualify: 0.85, scores: [0.88, 0.79, 0.91] })
+      ])
+    ]));
+
+    out.push(section('Badges', 'Twelve milestones, never for speed, volume or streaks. Earned badges carry a dated medal; the rest are dashed. Secret ones stay hidden until earned.', [
+      c.badges([
+        { title: 'Rules learned', desc: 'Passed the n-back lesson check', earned: true, date: '3 Nov', glyph: 'book' },
+        { title: '3-back reached', desc: 'Any n-back version', earned: true, date: '9 Nov', glyph: 'n3' },
+        { title: 'Both baselines done', desc: 'Lab visits B1 and B2', earned: true, date: '12 Nov', glyph: 'baseline', tone: 'amber' },
+        { title: 'Comeback', desc: 'Back after 14 days or more away', earned: true, date: '30 Nov', glyph: 'return', tone: 'kelp' },
+        { title: '5-back reached', desc: 'Any n-back version', earned: false, glyph: 'n5' },
+        { title: 'Relations: Different tier', desc: 'Reach tier 3 of the Relation Grid', earned: false, glyph: 'grid' },
+        { title: 'Explorer', earned: false, secret: true, glyph: 'compass' }
+      ])
+    ]));
+
+    out.push(section('Rule card', 'Opens every block: version, one-line rule, a worked example on the memory tape, and the keys for keyboard and touch together.', [
+      c.ruleCard({
+        chip: { family: 'nback', name: 'Plain', level: '2-back' }, meta: 'Block 4 of 14', title: 'Letters',
+        rule: 'Press Match when the letter is the same as the one 2 back.',
+        example: { items: ['K', 'T', 'K', 'R'], compare: 0, target: 2, label: '2 back: same letter', dim: [3], spoken: 'Example: K, T, K. The second K matches the K two back.' },
+        keys: [{ key: 'J', pad: 'Match', yes: true, when: 'the letter matches 2 back' }, { none: true, when: 'it does not match. Doing nothing is an answer.' }],
+        actions: [c.button('Start', { variant: 'primary', kbd: 'Space' })]
+      }),
+      c.ruleCard({
+        chip: { family: 'relations', name: 'Relation Grid', level: 'Same, 5.5 s' }, meta: 'Block 5 of 14', title: 'Last symbol of each string',
+        rule: 'Is there a row or column whose last symbols are all the same?',
+        keys: [{ key: 'J', pad: 'Match', yes: true, when: 'one line fits the rule' }, { key: 'F', pad: 'No', when: 'no line fits' }],
+        note: 'Diagonals do not count in this tier.',
+        hint: false
+      })
+    ]));
+
+    out.push(section('Debrief', 'Plain words first; the score and the next level in words; d′, bias, lures and reaction time behind Details. A one-second celebration only for a new level or a personal best.', [
+      c.debrief({
+        index: 4, total: 14, chip: { family: 'nback', name: 'Plain', level: '2-back' },
+        line: 'You caught 5 of 6 matches and pressed once when there was none.',
+        score: 0.86, next: '3-back at the standard pace', dir: 'up', celebrate: 'level', cheer: 'New level: 3-back',
+        details: [
+          { label: 'Matches caught', value: '5 of 6' }, { label: 'False presses', value: '1 of 14' },
+          { label: 'Presses on near misses', value: '0 of 4', hint: 'Lures: the same letter 1 or 3 back' },
+          { label: 'Balanced accuracy', value: '86%' }, { label: 'd′ (sensitivity)', value: '2.41' },
+          { label: 'Response bias', value: '0.12' }, { label: 'Median reaction time', value: '612 ms' }
+        ],
+        auto: 'Next block in 8 s', actions: [c.button('Continue', { variant: 'primary', kbd: 'Space' })]
+      }),
+      c.debrief({
+        index: 9, total: 14, line: 'You found 6 of 10 patterns and said Match twice when there was none.',
+        score: 0.70, next: 'Same tier, 8 s window', dir: 'down',
+        details: [{ label: 'Patterns found', value: '6 of 10' }, { label: 'False matches', value: '2 of 10' }],
+        actions: [c.button('Continue', { variant: 'secondary', kbd: 'Space' })]
+      })
+    ]));
+
+    var ba = [0.74, 0.77, 0.73, 0.79, 0.8, 0.78, 0.83, 0.79, 0.81, 0.84, 0.8, 0.77, 0.82, 0.85, 0.83, 0.87, 0.84, 0.86];
+    var lvlA = [2, 2, 2, 2.5, 2.5, 3, 3, 3, 3, 3.5, 3.5, 3.5, 4, 4, 4, 4, 4.5, 4.5];
+    var lvlB = [null, null, 2, 2, 2, 2, 2.5, 2.5, 2.5, 2.5, 3, 3, 3, 3, 3, 3.5, 3.5, 3.5];
+    out.push(section('Line chart', 'Hand-drawn SVG. Raw points stay visible under a 3-session trend; dashed and dotted rules mark changes of training style and of rules. Hover, or focus and use the arrow keys; every chart has a table twin.', [
+      c.lineChart({
+        title: 'Block score per session', desc: 'Balanced accuracy, all n-back blocks.',
+        series: [{ name: 'Block score', points: ba.map(function (v, i) { return { x: i + 1, y: v }; }) }],
+        x: { label: 'Session' }, y: { min: 0.5, max: 1, format: function (v) { return c.fmt.pct(v); } },
+        smooth: 3, markers: [{ x: 7, label: 'Sprint', kind: 'mode' }, { x: 12, label: 'Lures 6', kind: 'rule' }, { x: 14, label: 'Varied', kind: 'mode' }]
+      }),
+      c.lineChart({
+        title: 'Level per session', desc: 'Half steps are the fast pace.',
+        series: [
+          { name: 'Plain', points: lvlA.map(function (v, i) { return { x: i + 1, y: v }; }) },
+          { name: 'Transform', points: lvlB.map(function (v, i) { return v === null ? null : { x: i + 1, y: v }; }).filter(Boolean) }
+        ],
+        x: { label: 'Session' }, y: { min: 1, max: 5, format: function (v) { return Math.floor(v) + '-back' + (v % 1 ? ' fast' : ''); } }, curve: 'step'
+      })
+    ]));
+
+    out.push(section('Dot plot with noise band', 'Lab results per test across visits. Shapes, not only colours, tell the visits apart. The band shows the range a retest usually moves without any real change.', [
+      c.dotPlot({
+        title: 'Lab: memory tests', desc: 'Per cent correct. Bands appear once the community calibration exists.',
+        min: 0.4, max: 1, format: function (v) { return c.fmt.pct(v); },
+        rows: [
+          { label: 'N-back probe', points: [{ value: 0.62, kind: 'B1' }, { value: 0.66, kind: 'B2' }, { value: 0.79, kind: 'POST' }], band: { lo: 0.58, hi: 0.74 }, note: 'Above the noise band' },
+          { label: 'Relation probe', points: [{ value: 0.7, kind: 'B1' }, { value: 0.71, kind: 'B2' }, { value: 0.75, kind: 'POST' }], band: { lo: 0.63, hi: 0.79 }, note: 'Inside the noise band' },
+          { label: 'Spatial span', points: [{ value: 0.55, kind: 'B1' }, { value: 0.6, kind: 'B2' }, { value: 0.63, kind: 'POST' }, { value: 0.61, kind: 'FU' }], note: 'Not yet calibrated' },
+          { label: 'Updating', points: [{ value: 0.81, kind: 'B1' }, { value: 0.8, kind: 'B2' }, { value: 0.86, kind: 'POST' }], band: { lo: 0.74, hi: 0.88 }, note: 'Inside the noise band' }
+        ]
+      })
+    ]));
+
+    out.push(section('Empty states', 'An empty screen is an invitation to act: say what will appear and offer the next step.', [
+      h('div', { 'class': 'sg-cols' }, [
+        c.empty({ art: 'chart', title: 'Your graphs start after session 1', text: 'Each session adds a point. The trend line appears from session 3.', action: c.button('Start training', { variant: 'secondary' }) }),
+        c.empty({ art: 'lab', title: 'No Lab visits yet', text: 'Baselines take about 50 minutes, twice, a few days apart. They are optional.', action: c.button('See what the Lab measures', { variant: 'quiet' }) }),
+        c.empty({ art: 'sprout', title: 'No badges yet', text: 'Badges mark milestones like passing the first lesson. They never count speed or streaks.' })
+      ])
+    ]));
+
+    out.push(section('Inline notices', 'Icon shape and title carry the meaning, the colour only supports it.', [
+      c.notice({ tone: 'warn', title: 'Not saved on this device', text: 'This browser blocks storage here, so progress lasts until you close the tab. Use Export to keep a copy.', action: [c.button('Export now', { variant: 'secondary', size: 'sm', icon: 'download' })] }),
+      c.notice({ tone: 'info', title: 'The Discord link may not open in this preview', text: 'Type discord.gg/chmr into your browser instead.' }),
+      c.notice({ tone: 'good', title: 'Backup saved', text: 'Last backup: today, 14:02.' }),
+      c.notice({ tone: 'bad', title: 'This file is not a Long-Horizon backup', text: 'Nothing was imported. Choose a file that ends in .json and was made with Export.' }),
+      c.notice({ tone: 'info', slim: true, text: 'Experimental: this version is our design, not taken from a study.' })
+    ]));
+
+    out.push(section('Copy box', 'For exports, share text and study codes. Copy falls back to selecting the text when the clipboard is blocked.', [
+      c.copyBox({ label: 'Your data', hint: 'Keep this file somewhere safe. Import merges it back.', rows: 5, download: 'long-horizon-backup.json',
+        text: '{"schema":1,"appVersion":"1.0.0","rev":42,"sessions":[{"id":"s-7","mode":"varied","minutes":24,"counted":true}],"blocks":[...]}' })
+    ]));
+
+    out.push(section('Form controls', 'Native controls, restyled. Every option shows its state with a shape or a word, never colour alone.', [
+      c.segmented({ legend: 'Training style', name: 'sg-style-' + scopeName, value: 'varied', hint: 'You can change this at any time.', options: [
+        { value: 'varied', label: 'Varied' }, { value: 'sprint', label: 'Sprint' }, { value: 'stretch', label: 'Stretch' }, { value: 'mastery', label: 'Mastery Path' }, { value: 'protocols', label: 'Protocols' }
+      ] }),
+      c.toggle({ label: 'Per-response feedback', hint: 'A short flash after each press. Off by default in Varied.', checked: false }),
+      c.toggle({ label: 'Spoken letters', hint: 'Uses the bundled recordings.', checked: true }),
+      c.select({ label: 'Session length', value: 25, options: [{ value: 10, label: '10 minutes' }, { value: 15, label: '15 minutes' }, { value: 20, label: '20 minutes' }, { value: 25, label: '25 minutes' }, { value: 30, label: '30 minutes' }] }),
+      c.field({ label: 'Coordinator code', hint: 'Only for community studies.', control: h('input', { 'class': 'hf-input', type: 'text', inputmode: 'text', autocomplete: 'off', placeholder: 'e.g. CHMR-4K2P' }) }),
+      c.field({ label: 'Volume', control: h('input', { 'class': 'hf-range', type: 'range', min: '0', max: '100', value: '80' }) })
+    ]));
+
+    out.push(section('Response pads', 'Big labelled pads at the bottom of the task. "No" is always on the left. Left-handed mode (setting, or .hf-pads--mirror) swaps the other pads; key caps hide on touch screens.', [
+      h('div', { 'class': 'sg-taskbox hf-task' }, [
+        label('One pad: n-back (press only on a match)'),
+        c.pads({ pads: [{ id: 'match', label: 'Match', key: 'J' }] }),
+        label('Two pads: Dual n-back'),
+        c.pads({ pads: [{ id: 'match', label: 'Position', key: 'J', icon: 'grid' }, { id: 'match2', label: 'Sound', key: 'K' }] }),
+        label('Two pads: answer every item (Relation Grid, Span, visual search)'),
+        c.pads({ pads: [{ id: 'match', label: 'Match', key: 'J' }, { id: 'no', label: 'No', key: 'F' }] }),
+        label('Three pads'),
+        c.pads({ pads: [{ id: 'no', label: 'No', key: 'F' }, { id: 'match', label: 'Position', key: 'J', icon: 'grid' }, { id: 'match2', label: 'Sound', key: 'K' }] }),
+        label('Three pads, left-handed mirror'),
+        c.pads({ mirror: true, pads: [{ id: 'no', label: 'No', key: 'F' }, { id: 'match', label: 'Position', key: 'J', icon: 'grid' }, { id: 'match2', label: 'Sound', key: 'K' }] })
+      ])
+    ]));
+
+    var dlgPreview = h('div', { 'class': 'hf-modal', role: 'presentation' }, [h('div', { 'class': 'hf-modal__body' }, [
+      h('p', { 'class': 'hf-modal__title' }, ['Paused']),
+      h('p', { 'class': 'hf-modal__text' }, ['The block restarts with a fresh sequence after a 3-2-1 count. Paused blocks never change your level.']),
+      h('div', { 'class': 'hf-modal__actions' }, [c.button('End session', { variant: 'quiet' }), c.button('How to play', { variant: 'secondary' }), c.button('Resume', { variant: 'primary', kbd: 'Space' })])
+    ])]);
+    out.push(section('Dialog and toast', 'Dialogs use <dialog class="hf-modal"> with the body in .hf-modal__body; on phones they rise from the bottom. Toasts stack in #hf-toasts above the tab bar.', [
+      h('div', { 'class': 'sg-modal-preview' }, [dlgPreview]),
+      h('div', { 'class': 'sg-toast-preview' }, [h('div', { 'class': 'hf-toasts' }, [h('div', { 'class': 'hf-toast' }, ['Share text copied. Paste it in the Chimera Discord.'])])])
+    ]));
+    return out;
+  }
+
+  /* ---------- assemble ---------- */
+  var page = h('div', { 'class': 'sg' }, [
+    h('div', { 'class': 'sg-head' }, [
+      h('h1', { 'class': 'hf-h1' }, ['Long-Horizon design system']),
+      h('p', { 'class': 'hf-lead' }, ['A calm instrument for training working memory: sea-ink neutrals, one orange key per screen, progress drawn as graduated scales.']),
+      tools()
+    ]),
+    section('Colour', 'Okabe–Ito hues, stepped per theme for contrast. Text pairs are at least 4.5:1; marks at least 3:1. Values below are read live from the current theme.', [swatches()]),
+    section('Type', 'System fonts only. Bringhurst scale 12, 14, 16, 18, 21, 24, 36, 48. Weights 400, 600, 700.', [typeScale()])
+  ]);
+
+  if (q.split === '1') {
+    var light = h('div', { 'class': 'sg-col', 'data-theme': 'light' }, [h('p', { 'class': 'sg-coltitle' }, ['Light'])].concat(components('l')));
+    var dark = h('div', { 'class': 'sg-col', 'data-theme': 'dark' }, [h('p', { 'class': 'sg-coltitle' }, ['Dark'])].concat(components('d')));
+    page.style.maxWidth = 'none';
+    page.appendChild(h('div', { 'class': 'sg-split' }, [light, dark]));
+  } else {
+    components('m').forEach(function (n) { page.appendChild(n); });
+  }
+  screen.appendChild(page);
+
+  if (q.more === '1') HF.ui.shell.openMore(true);
+  if (q.chimera === '1') HF.ui.chimera.show();
+  window.__sgReady = true;
+})();
+</script>
+</body>
+</html>

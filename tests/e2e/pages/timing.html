@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Long-Horizon timing harness</title>
+<style>
+  html, body { margin: 0; background: #fff; color: #111; font: 16px/1.4 system-ui, sans-serif; }
+  #stim { position: fixed; left: 50%; top: 35%; transform: translate(-50%, -50%); font-size: 96px; font-weight: 700; visibility: hidden; }
+  .pads { position: fixed; bottom: 24px; left: 0; right: 0; display: flex; gap: 16px; justify-content: center; }
+  .pad { min-width: 120px; min-height: 64px; font-size: 20px; touch-action: manipulation; user-select: none; }
+</style>
+</head>
+<body>
+<div id="stim" aria-hidden="true"></div>
+<div class="pads">
+  <button type="button" class="pad" data-key="no">No</button>
+  <button type="button" class="pad" data-key="match">Match</button>
+  <button type="button" class="pad" data-key="match2">Sound</button>
+</div>
+<script src="../../../js/core/rng.js"></script>
+<script src="../../../js/core/stats.js"></script>
+<script src="../../../js/core/util.js"></script>
+<script src="../../../js/core/schema.js"></script>
+<script src="../../../js/core/dom.js"></script>
+<script src="../../../js/core/input.js"></script>
+<script src="../../../js/core/timing.js"></script>
+<script src="../../../js/core/audio.js"></script>
+<script>
+/* Test harness only (not shipped in the app). A dummy view toggles one prepared element; the Python side drives
+   real key presses and reads the logs. Long animation frames are collected for the stall check. */
+(function () {
+  'use strict';
+  var stim = document.getElementById('stim');
+  var loaf = [];
+  var loafSupported = false;
+  try {
+    if (PerformanceObserver.supportedEntryTypes && PerformanceObserver.supportedEntryTypes.indexOf('long-animation-frame') >= 0) {
+      new PerformanceObserver(function (list) {
+        list.getEntries().forEach(function (e) {
+          loaf.push({
+            start: e.startTime, duration: e.duration, blocking: e.blockingDuration,
+            scripts: (e.scripts || []).map(function (s) { return { src: s.sourceURL, fn: s.sourceFunctionName, invoker: s.invoker, dur: s.duration }; })
+          });
+        });
+      }).observe({ type: 'long-animation-frame', buffered: true });
+      loafSupported = true;
+    }
+  } catch (e) { loafSupported = false; }
+
+  var H = { shown: -1, hidden: -1, prepared: [], loafSupported: loafSupported, pending: null };
+  var view = {
+    prepare: function (trial) { stim.textContent = trial.stim.main ? trial.stim.main.text : trial.stim.text; H.prepared.push(trial.i); },
+    show: function (trial) { stim.style.visibility = 'visible'; H.shown = trial.i; },
+    hide: function (trial) { stim.style.visibility = 'hidden'; H.hidden = trial.i; }
+  };
+  var LET = 'CHKLQRST';
+  function streamSpec(n, onMs, soaMs, two) {
+    var trials = [];
+    for (var i = 0; i < n; i++) {
+      trials.push({ i: i, stim: { main: { text: LET.charAt(i % 8) } }, scorable: true, target: { main: false }, lure: { main: null } });
+    }
+    return { kind: 'stream', onMs: onMs, soaMs: soaMs, streams: two ? ['pos', 'snd'] : ['main'], trials: trials };
+  }
+  function discreteSpec(n, windowMs, itiMs) {
+    var trials = [];
+    for (var i = 0; i < n; i++) trials.push({ i: i, stim: { text: LET.charAt(i % 8) }, answer: 'match' });
+    return { kind: 'discrete', windowMs: windowMs, itiMs: itiMs, trials: trials };
+  }
+  function wrap(p) {
+    H.pending = p.then(function (log) {
+      var t0 = log.t0, end = t0;
+      (log.offsets || []).forEach(function (o) { if (o !== null && t0 + o > end) end = t0 + o; });
+      var during = loaf.filter(function (e) { return e.start + e.duration > t0 - 50 && e.start < end + 50; });
+      return { log: log, loaf: during, loafAll: loaf.length, loafSupported: loafSupported, busyAfter: HF.timing.busy };
+    });
+    return true;
+  }
+  H.startStream = function (o) {
+    H.shown = -1; H.hidden = -1; H.prepared = [];
+    return wrap(HF.timing.runStream(streamSpec(o.n, o.onMs, o.soaMs, o.two), view, o.opts || {}));
+  };
+  H.startDiscrete = function (o) {
+    H.shown = -1; H.hidden = -1; H.prepared = [];
+    var opts = o.opts || {};
+    return wrap(HF.timing.runDiscrete(discreteSpec(o.n, o.windowMs, o.itiMs), view, opts));
+  };
+  H.result = function () { return H.pending; };
+  H.pauseInfos = [];
+  HF.timing.onPause(function (info) { H.pauseInfos.push(info); });
+  H.startCustom = function (o) {
+    o = o || {};
+    H.cevents = [];
+    H.flow = HF.timing.custom({
+      pause: function (i) { H.cevents.push('pause:' + i.reason); },
+      resume: function () { H.cevents.push('resume'); },
+      abort: function (i) { H.cevents.push('abort:' + i.reason); }
+    }, { kind: 'test', audio: !!o.audio });
+    return true;
+  };
+  H.flowState = function () {
+    return { state: H.flow.state, active: H.flow.active, busy: HF.timing.busy, timingState: HF.timing.state,
+             attr: document.documentElement.hasAttribute('data-busy'), events: H.cevents.slice() };
+  };
+  H.fakeHidden = function () {
+    Object.defineProperty(document, 'visibilityState', { configurable: true, get: function () { return 'hidden'; } });
+    document.dispatchEvent(new Event('visibilitychange'));
+  };
+  H.fakeVisible = function () {
+    delete document.visibilityState;
+    document.dispatchEvent(new Event('visibilitychange'));
+  };
+  H.pagehide = function () { window.dispatchEvent(new Event('pagehide')); };
+  window.harness = H;
+})();
+</script>
+</body>
+</html>

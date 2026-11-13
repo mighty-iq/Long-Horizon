@@ -1,0 +1,984 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Long-Horizon: the guide</title>
+<meta name="description" content="The Long-Horizon guide: what the free working memory trainer does, how to use it, and what the research really says.">
+<meta name="author" content="Long-Horizon contributors (Chimera community)">
+<meta name="long-horizon-version" content="1.0.0">
+<!-- The repository's web address, once it exists (e.g. https://github.com/NAME/long-horizon). Empty = links point to the
+     Chimera Discord instead. tools/build-pdf.py --repo URL overrides it. -->
+<meta name="long-horizon-repo" content="https://github.com/mighty-iq/Long-Horizon">
+<link rel="stylesheet" href="guide.css">
+<!--
+  Long-Horizon guide, source of docs/Long-Horizon-Guide.pdf (build: python3 tools/build-pdf.py).
+  © 2026 Long-Horizon contributors (Chimera community). Texts: CC BY-SA 4.0. Every number here comes from the code, the
+  project's plan and its research notes; keep it in step with the app. The app points to "chapter 13" for the full
+  source list: keep References as chapter 13.
+  Screenshots: each <figure class="shot" data-shot="NAME"> shows docs/guide/assets/shots/NAME.png, made by
+  docs/guide/make_shots.py from the real app with synthetic data. data-size is the layout (phone = 390×844 CSS px,
+  wide = 1366×768); data-state says what the picture shows.
+-->
+</head>
+<body>
+
+<!-- ================================================================ COVER -->
+<section class="cover" aria-label="Cover">
+  <p class="kicker">The guide · version 1.0.0 · November 2026</p>
+  <h1>Long-Horizon</h1>
+  <p class="descriptor">working memory trainer</p>
+  <p class="tagline">Hold more in mind. Keep it straight.</p>
+  <p class="sub">Free, with a built-in lab. This guide shows what it does, how to use it, and what the research really says.</p>
+  <div class="scale"><svg class="ruler" viewBox="0 0 1620 30" preserveAspectRatio="none" aria-hidden="true"><path class="maj" d="M0.6 0V30M100.6 0V30M200.6 0V30M300.6 0V30M400.6 0V30M500.6 0V30M600.6 0V30M700.6 0V30M800.6 0V30M900.6 0V30M1000.6 0V30M1100.6 0V30M1200.6 0V30M1300.6 0V30M1400.6 0V30M1500.6 0V30M1600.6 0V30"/><path class="min" d="M20.5 15V30M40.5 15V30M60.5 15V30M80.5 15V30M120.5 15V30M140.5 15V30M160.5 15V30M180.5 15V30M220.5 15V30M240.5 15V30M260.5 15V30M280.5 15V30M320.5 15V30M340.5 15V30M360.5 15V30M380.5 15V30M420.5 15V30M440.5 15V30M460.5 15V30M480.5 15V30M520.5 15V30M540.5 15V30M560.5 15V30M580.5 15V30M620.5 15V30M640.5 15V30M660.5 15V30M680.5 15V30M720.5 15V30M740.5 15V30M760.5 15V30M780.5 15V30M820.5 15V30M840.5 15V30M860.5 15V30M880.5 15V30M920.5 15V30M940.5 15V30M960.5 15V30M980.5 15V30M1020.5 15V30M1040.5 15V30M1060.5 15V30M1080.5 15V30M1120.5 15V30M1140.5 15V30M1160.5 15V30M1180.5 15V30M1220.5 15V30M1240.5 15V30M1260.5 15V30M1280.5 15V30M1320.5 15V30M1340.5 15V30M1360.5 15V30M1380.5 15V30M1420.5 15V30M1440.5 15V30M1460.5 15V30M1480.5 15V30M1520.5 15V30M1540.5 15V30M1560.5 15V30M1580.5 15V30"/></svg></div>
+  <div class="chimera">
+    <p class="big">Built by the Chimera community on Discord.</p>
+    <p>Share your progress, suggest features and join community studies.</p>
+    <a class="join" href="https://discord.gg/chmr">Join us: discord.gg/chmr</a>
+  </div>
+  <p class="meta">Free and open source. Code under the MIT licence; this guide under CC BY-SA 4.0.<br>
+    Play it: <a href="https://mighty-iq.github.io/Long-Horizon/">mighty-iq.github.io/Long-Horizon</a> · Code: <a data-repo href="https://github.com/mighty-iq/Long-Horizon">github.com/mighty-iq/Long-Horizon</a></p>
+  <img class="art" src="assets/horizon.svg" alt="">
+</section>
+
+<!-- ================================================================ CONTENTS -->
+<section class="toc-page" id="contents">
+  <p class="ch-num">Long-Horizon guide</p>
+  <h2>Contents</h2>
+  <nav class="toc" aria-label="Contents">
+    <ol>
+      <li><a href="#what"><span class="n">1</span><span class="t">What Long-Horizon is<small>The idea, and why the name</small></span><span class="p">00</span></a></li>
+      <li><a href="#start"><span class="n">2</span><span class="t">Quick start<small>On a computer, on a phone, your first ten minutes, keys</small></span><span class="p">00</span></a></li>
+      <li><a href="#nback"><span class="n">3</span><span class="t">N-back and executive n-back<small>Plain, Dual, Transform (Cao et al. 2026), Arithmetic, Switch</small></span><span class="p">00</span></a></li>
+      <li><a href="#relations"><span class="n">4</span><span class="t">Relations<small>Equal Steps (Wang et al. 2025), the Relation Grid and the Relation Stream</small></span><span class="p">00</span></a></li>
+      <li><a href="#span"><span class="n">5</span><span class="t">Span (opt-in)<small>Remembering a list while checking sums</small></span><span class="p">00</span></a></li>
+      <li><a href="#variety"><span class="n">6</span><span class="t">Variety and interleaving<small>Narrow first, then mixed</small></span><span class="p">00</span></a></li>
+      <li><a href="#styles"><span class="n">7</span><span class="t">The six training styles<small>Varied, Sprint, Stretch, Mastery Path, Protocols, Free play, and why there are six</small></span><span class="p">00</span></a></li>
+      <li><a href="#lab"><span class="n">8</span><span class="t">The Lab and Study mode<small>Measuring transfer, running a community study, the analysis tools</small></span><span class="p">00</span></a></li>
+      <li><a href="#progress"><span class="n">9</span><span class="t">Progress, badges and goals<small>Debriefs, levels, weekly goals, Focus mode, sharing</small></span><span class="p">00</span></a></li>
+      <li><a href="#research"><span class="n">10</span><span class="t">The research, plainly<small>What the studies found, and their limits</small></span><span class="p">00</span></a></li>
+      <li><a href="#privacy"><span class="n">11</span><span class="t">Your data and privacy<small>Where your data live, saving, export and backups</small></span><span class="p">00</span></a></li>
+      <li><a href="#faq"><span class="n">12</span><span class="t">FAQ and troubleshooting<small>Sound, timing, phones, browsers, accessibility</small></span><span class="p">00</span></a></li>
+      <li><a href="#refs"><span class="n">13</span><span class="t">References<small>Every source the app and this guide cite</small></span><span class="p">00</span></a></li>
+      <li><a href="#credits"><span class="n">14</span><span class="t">Credits, licences and Chimera</span><span class="p">00</span></a></li>
+    </ol>
+  </nav>
+  <div class="box" style="margin-top:8mm">
+    <span class="label">How to read this guide</span>
+    <p>Start with chapters 1 and 2; read the rest when you need it. Grey boxes explain words. Blue boxes marked <b>In depth</b> hold technical detail you can skip. Amber boxes marked <b>Honest note</b> say where the evidence is thin. Green boxes are tips. The pictures come from the app with made-up training data.</p>
+    <p>This guide describes Long-Horizon 1.0.0. Every link is clickable in the PDF. © 2026 Long-Horizon contributors (Chimera community); the texts are licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</p>
+  </div>
+</section>
+
+<!-- ================================================================ 1 WHAT -->
+<section class="chapter" id="what">
+  <header class="ch-head">
+    <p class="ch-num"><b>1</b> · Start here</p>
+    <h2>What Long-Horizon is</h2>
+    <svg class="ruler" viewBox="0 0 1640 26" preserveAspectRatio="none" aria-hidden="true"><path class="maj" d="M0.6 0V26M100.6 0V26M200.6 0V26M300.6 0V26M400.6 0V26M500.6 0V26M600.6 0V26M700.6 0V26M800.6 0V26M900.6 0V26M1000.6 0V26M1100.6 0V26M1200.6 0V26M1300.6 0V26M1400.6 0V26M1500.6 0V26M1600.6 0V26"/><path class="min" d="M20.5 13V26M40.5 13V26M60.5 13V26M80.5 13V26M120.5 13V26M140.5 13V26M160.5 13V26M180.5 13V26M220.5 13V26M240.5 13V26M260.5 13V26M280.5 13V26M320.5 13V26M340.5 13V26M360.5 13V26M380.5 13V26M420.5 13V26M440.5 13V26M460.5 13V26M480.5 13V26M520.5 13V26M540.5 13V26M560.5 13V26M580.5 13V26M620.5 13V26M640.5 13V26M660.5 13V26M680.5 13V26M720.5 13V26M740.5 13V26M760.5 13V26M780.5 13V26M820.5 13V26M840.5 13V26M860.5 13V26M880.5 13V26M920.5 13V26M940.5 13V26M960.5 13V26M980.5 13V26M1020.5 13V26M1040.5 13V26M1060.5 13V26M1080.5 13V26M1120.5 13V26M1140.5 13V26M1160.5 13V26M1180.5 13V26M1220.5 13V26M1240.5 13V26M1260.5 13V26M1280.5 13V26M1320.5 13V26M1340.5 13V26M1360.5 13V26M1380.5 13V26M1420.5 13V26M1440.5 13V26M1460.5 13V26M1480.5 13V26M1520.5 13V26M1540.5 13V26M1560.5 13V26M1580.5 13V26M1620.5 13V26"/></svg>
+    <p class="lead">Working memory is the small mental workspace where you hold a few things and work with them: a number while you dial it, the start of a sentence while you read its end, the steps of a plan while you carry it out. Long-Horizon is a free trainer for that workspace, with a built-in lab that measures what the training does.</p>
+  </header>
+
+  <div class="box">
+    <span class="label">Why Long-Horizon?</span>
+    <p>In AI, a <b>long-horizon task</b> takes many steps in a row, and models are now rated by their <i>time horizon</i>: the length of task, in the time skilled people typically need, that a model completes half the time (Kwa et al. 2025). <b>Working memory is the same capacity in people:</b> keeping a plan and its pieces intact while you work through it. In the trainer it is counted in steps: in n-back the <i>n</i> is your horizon, in Equal Steps how far back you compare, and in the relation grid how many symbols you relate at once. Working memory is also closely tied to reasoning: in a study of 131 people, the latent correlations with reasoning (between the underlying abilities) were about .8 for working memory and .9 for relational integration (Oberauer et al. 2008). Whether training it raises reasoning is the open question, and the Lab measures it.</p>
+  </div>
+
+  <h3>What you do</h3>
+  <p>You play short blocks, about a minute each, of a few kinds of task:</p>
+  <ul>
+    <li><b>N-back</b> and <b>executive n-back</b>: follow a stream of items and spot when one matches the item a few steps back, sometimes after a mental step such as “the day after” (chapter 3).</li>
+    <li><b>Relations</b>: spot a relation across several items at once, such as equal steps between numbers or a row of matching symbols (chapter 4).</li>
+    <li><b>Span</b>, if you turn it on: remember a short list while you check sums (chapter 5).</li>
+  </ul>
+  <p>A session mixes these tasks: about 14 blocks, usually 15 to 25 minutes (Session length 10–30; Today shows the estimate). Three to five sessions a week work well, and the reference programme is 20 sessions.</p>
+
+  <h3>What makes it different</h3>
+  <ul>
+    <li><b>Two tasks from recent papers,</b> as close to the originals as each paper allows: Cao and colleagues’ executive n-back (2026) and Wang, Sun and Xiao’s number stream, here Equal Steps (chapter 10).</li>
+    <li><b>Six training styles,</b> because the research disagrees about the best way to practise (chapter 7).</li>
+    <li><b>An optional Lab</b> with tests you never train on, and a <b>Study mode</b> for experiments (chapter 8).</li>
+    <li><b>Quiet by design:</b> during a block only the task is on screen (chapter 9).</li>
+    <li><b>Private, free and open source:</b> no account, no tracking, your data stay on your device (chapter 11).</li>
+  </ul>
+
+  <div class="box honest">
+    <span class="label">Honest note</span>
+    <p><b>People get much better at the trained tasks and often at very similar untrained ones. Controlled studies mostly find no gain in reasoning or IQ, so Long-Horizon measures transfer instead of promising it.</b></p>
+  </div>
+
+  <div class="box" id="words">
+    <span class="label">Five words you will meet</span>
+    <dl class="terms terms2">
+      <div class="wide"><dt>Horizon</dt><dd>How many steps you can hold in mind and still work with. In n-back and Equal Steps it is how far back you compare (the <i>n</i>); in the relation grid, how many symbols you relate at once; in a complex span, the length of the list.</dd></div>
+      <div><dt>Match</dt><dd>An item that fits the rule: press <kbd>J</kbd> or tap <b>Match</b>.</dd></div>
+      <div><dt>Lure</dt><dd>An item that almost fits the rule, such as the same item one step too far back.</dd></div>
+      <div><dt>Level</dt><dd>Your difficulty on one version of a task, such as “3-back”.</dd></div>
+      <div><dt>Transfer</dt><dd>Gains beyond the trained task: <i>near</i> (same kind of task), <i>mid</i> (other memory tasks), <i>far</i> (reasoning tests).</dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================================================================ 2 QUICK START -->
+<section class="chapter" id="start">
+  <header class="ch-head">
+    <p class="ch-num"><b>2</b> · Start here</p>
+    <h2>Quick start</h2>
+    <svg class="ruler" viewBox="0 0 1640 26" preserveAspectRatio="none" aria-hidden="true"><path class="maj" d="M0.6 0V26M100.6 0V26M200.6 0V26M300.6 0V26M400.6 0V26M500.6 0V26M600.6 0V26M700.6 0V26M800.6 0V26M900.6 0V26M1000.6 0V26M1100.6 0V26M1200.6 0V26M1300.6 0V26M1400.6 0V26M1500.6 0V26M1600.6 0V26"/><path class="min" d="M20.5 13V26M40.5 13V26M60.5 13V26M80.5 13V26M120.5 13V26M140.5 13V26M160.5 13V26M180.5 13V26M220.5 13V26M240.5 13V26M260.5 13V26M280.5 13V26M320.5 13V26M340.5 13V26M360.5 13V26M380.5 13V26M420.5 13V26M440.5 13V26M460.5 13V26M480.5 13V26M520.5 13V26M540.5 13V26M560.5 13V26M580.5 13V26M620.5 13V26M640.5 13V26M660.5 13V26M680.5 13V26M720.5 13V26M740.5 13V26M760.5 13V26M780.5 13V26M820.5 13V26M840.5 13V26M860.5 13V26M880.5 13V26M920.5 13V26M940.5 13V26M960.5 13V26M980.5 13V26M1020.5 13V26M1040.5 13V26M1060.5 13V26M1080.5 13V26M1120.5 13V26M1140.5 13V26M1160.5 13V26M1180.5 13V26M1220.5 13V26M1240.5 13V26M1260.5 13V26M1280.5 13V26M1320.5 13V26M1340.5 13V26M1360.5 13V26M1380.5 13V26M1420.5 13V26M1440.5 13V26M1460.5 13V26M1480.5 13V26M1520.5 13V26M1540.5 13V26M1560.5 13V26M1580.5 13V26M1620.5 13V26"/></svg>
+    <p class="lead">Long-Horizon runs in your web browser. There is nothing to install and no account to make.</p>
+  </header>
+
+  <h3>On a computer</h3>
+  <ol class="steps">
+    <li><b>Get it.</b> Play it at <a href="https://mighty-iq.github.io/Long-Horizon/">mighty-iq.github.io/Long-Horizon</a>, or download it from <a data-repo href="https://github.com/mighty-iq/Long-Horizon">github.com/mighty-iq/Long-Horizon</a> (<i>Code → Download ZIP</i>) and unzip it.</li>
+    <li><b>Open it.</b> Double-click <code>index.html</code> and keep the folder together, or use <code>dist/long-horizon.html</code>, the whole app in one file, which you can keep anywhere. Both work offline.</li>
+    <li><b>Use a current browser:</b> Chrome, Edge, Firefox or Safari. Long-Horizon was tested in Chrome’s engine; if something looks wrong in another browser, please tell us in the Discord.</li>
+  </ol>
+  <div class="box deep">
+    <span class="label">In depth · putting Long-Horizon on GitHub Pages</span>
+    <p>Upload or fork the <code>long-horizon</code> folder as a GitHub repository, then choose <b>Settings → Pages → Deploy from a branch</b>, branch <b>main</b>, folder <b>/ (root)</b>. A minute later the app is at <code>https://&lt;account&gt;.github.io/&lt;repository&gt;/</code>, where it can be installed and used offline.</p>
+  </div>
+
+  <h3>On a phone</h3>
+  <div class="with-shot">
+    <figure class="shot" data-shot="today-phone" data-size="phone" data-viewport="390x844" data-state="Today after 13 sessions, light theme: the next session's card (style, estimated minutes, what it holds, its block bar, the all-versions-introduced note) and Start session">
+      <div class="frame"><img src="assets/shots/today-phone.png" alt="The Today screen on a phone: the next session, what it holds, and the Start session button"><div class="ph"><b>today-phone</b><span>phone 390 × 844 · light</span><span>Today after a few sessions</span></div></div>
+      <figcaption><b>Today</b> shows your next session, what it holds and about how long it takes.</figcaption>
+    </figure>
+    <div class="text">
+      <ul>
+        <li><b>Open <a href="https://mighty-iq.github.io/Long-Horizon/">mighty-iq.github.io/Long-Horizon</a></b> in <b>Safari</b> on an iPhone or iPad, or in <b>Chrome</b> on Android. Phones cannot run the downloaded files reliably.</li>
+        <li><b>Add it to your Home Screen</b> so it opens full-screen, like an app. In Safari: <i>Share → Add to Home Screen</i>. In Chrome: the menu (three dots), then <i>Add to Home screen</i> or <i>Install app</i>.</li>
+        <li><b>Avoid in-app browsers.</b> A link tapped inside Discord or another app may open in that app’s own browser, which can keep your progress apart from Safari or Chrome. Open Long-Horizon in Safari or Chrome; the app warns you when it can tell.</li>
+        <li><b>Sound:</b> for the sound tasks, turn the volume up and the iPhone’s silent switch off, and try the sound check in Settings.</li>
+        <li><b>Back up:</b> Safari may delete a site’s data after 7 days of browser use without a visit. Export from Progress now and then (chapter 11).</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Your first ten minutes</h3>
+  <div class="with-shot">
+    <figure class="shot" data-shot="chimera-popup" data-size="phone" data-viewport="390x844" data-state="The Chimera pop-up at launch, phone bottom sheet, light theme: horizon art (half sun, horizon line, three rungs), title Long-Horizon, the text A free working memory trainer, built by the Chimera community on Discord. Check it out!, Join us on Discord, Start training (focused)">
+      <div class="frame"><img src="assets/shots/chimera-popup.png" alt="The Chimera pop-up: Long-Horizon, a free working memory trainer built by the Chimera community on Discord, with a Join us on Discord button"><div class="ph"><b>chimera-popup</b><span>phone 390 × 844 · light</span><span>The pop-up at launch</span></div></div>
+      <figcaption><b>The Chimera pop-up</b> appears once each time you open Long-Horizon.</figcaption>
+    </figure>
+    <div class="text">
+      <ol class="steps">
+        <li><b>The Chimera pop-up</b> greets every launch. <b>Start training</b> closes it (so do Enter and Escape); <b>Join us on Discord</b> opens <a href="https://discord.gg/chmr">discord.gg/chmr</a>.</li>
+        <li><b>Welcome.</b> Choose <b>Start training now</b> (the default) or <b>Measure first</b>, which runs the Lab’s two baselines before you train: about 50 minutes now and about the same again 2 to 7 days later (chapter 8). Either way, the lesson comes first.</li>
+        <li><b>The n-back lesson</b> (about 6 minutes) teaches by playing, with letters on a fading “memory tape”, then a short check. Session 1 uses grid squares by the same rule; other tasks get a short lesson first.</li>
+        <li><b>Session 1</b> finds your level quickly: blocks move two levels at a time until your first step down.</li>
+      </ol>
+      <h4>Keys and taps</h4>
+      <table class="keys compact">
+        <thead><tr><th>Key</th><th>Touch</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><kbd>J</kbd></td><td>Match (Position in Dual)</td><td>The item matches (also <b>Present</b> in visual search and <b>True</b> in Span).</td></tr>
+          <tr><td><kbd>K</kbd></td><td>Sound</td><td>The sound matches, in Dual n-back.</td></tr>
+          <tr><td><kbd>F</kbd></td><td>No</td><td>No match (<b>Absent</b>, <b>False</b>), only where every item needs an answer: the Relation Grid, Span’s sums, visual search.</td></tr>
+          <tr><td><kbd>Space</kbd></td><td>Start</td><td>Start or continue.</td></tr>
+          <tr><td><kbd>Esc</kbd> <kbd>P</kbd></td><td>Pause</td><td>Pause. A paused block never counts against you.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p>In most tasks <b>doing nothing means “no match”</b>. On touch screens <b>No</b> is always on the left (the left-handed layout mirrors it). Keys can be changed in Settings, including a Brain Workshop-style <kbd>A</kbd>/<kbd>L</kbd> preset.</p>
+
+</section>
+
+<!-- ================================================================ 3 N-BACK -->
+<section class="chapter" id="nback">
+  <header class="ch-head">
+    <p class="ch-num"><b>3</b> · The training</p>
+    <h2>N-back and executive n-back</h2>
+    <svg class="ruler" viewBox="0 0 1640 26" preserveAspectRatio="none" aria-hidden="true"><path class="maj" d="M0.6 0V26M100.6 0V26M200.6 0V26M300.6 0V26M400.6 0V26M500.6 0V26M600.6 0V26M700.6 0V26M800.6 0V26M900.6 0V26M1000.6 0V26M1100.6 0V26M1200.6 0V26M1300.6 0V26M1400.6 0V26M1500.6 0V26M1600.6 0V26"/><path class="min" d="M20.5 13V26M40.5 13V26M60.5 13V26M80.5 13V26M120.5 13V26M140.5 13V26M160.5 13V26M180.5 13V26M220.5 13V26M240.5 13V26M260.5 13V26M280.5 13V26M320.5 13V26M340.5 13V26M360.5 13V26M380.5 13V26M420.5 13V26M440.5 13V26M460.5 13V26M480.5 13V26M520.5 13V26M540.5 13V26M560.5 13V26M580.5 13V26M620.5 13V26M640.5 13V26M660.5 13V26M680.5 13V26M720.5 13V26M740.5 13V26M760.5 13V26M780.5 13V26M820.5 13V26M840.5 13V26M860.5 13V26M880.5 13V26M920.5 13V26M940.5 13V26M960.5 13V26M980.5 13V26M1020.5 13V26M1040.5 13V26M1060.5 13V26M1080.5 13V26M1120.5 13V26M1140.5 13V26M1160.5 13V26M1180.5 13V26M1220.5 13V26M1240.5 13V26M1260.5 13V26M1280.5 13V26M1320.5 13V26M1340.5 13V26M1360.5 13V26M1380.5 13V26M1420.5 13V26M1440.5 13V26M1460.5 13V26M1480.5 13V26M1520.5 13V26M1540.5 13V26M1560.5 13V26M1580.5 13V26M1620.5 13V26"/></svg>
+    <p class="lead">Items appear one at a time. For each one, ask: is this the same as the item <i>n</i> steps back? At 1-back you compare with the item just before; at 2-back, with the one before that. Press <b>Match</b> when it is. Doing nothing means “no match”. The <i>n</i> is your horizon: you keep the last <i>n</i> items in mind and update them with every new one.</p>
+  </header>
+
+  <figure class="diagram">
+    <svg viewBox="0 0 640 168" role="img" aria-label="A 2-back stream of eight letters with three matches and one lure">
+      <defs><marker id="ah1" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0072B2"/></marker></defs>
+      <text x="0" y="14" font-size="13" font-weight="700" fill="#0F2A3A">2-back</text>
+      <text x="640" y="14" font-size="11.5" fill="#566B76" text-anchor="end">time →</text>
+      <g fill="none" stroke="#0072B2" stroke-width="2.2">
+        <path d="M212 60C212 26 60 26 60 60" marker-end="url(#ah1)"/>
+        <path d="M440 60C440 26 288 26 288 60" marker-end="url(#ah1)"/>
+        <path d="M592 60C592 26 440 26 440 60" marker-end="url(#ah1)"/>
+      </g>
+      <g font-size="11.5" fill="#0072B2" text-anchor="middle" font-weight="600">
+        <text x="136" y="30">2 back</text><text x="364" y="30">2 back</text><text x="516" y="30">2 back</text>
+      </g>
+      <g stroke-width="1.6">
+        <rect x="34" y="62" width="52" height="52" rx="8" fill="#FFFFFF" stroke="#6F848C"/>
+        <rect x="110" y="62" width="52" height="52" rx="8" fill="#FBF2DF" stroke="#B07A00" stroke-dasharray="5 3"/>
+        <rect x="186" y="62" width="52" height="52" rx="8" fill="#EAF3F9" stroke="#0072B2" stroke-width="2.4"/>
+        <rect x="262" y="62" width="52" height="52" rx="8" fill="#FFFFFF" stroke="#6F848C"/>
+        <rect x="338" y="62" width="52" height="52" rx="8" fill="#FBF2DF" stroke="#B07A00" stroke-dasharray="5 3"/>
+        <rect x="414" y="62" width="52" height="52" rx="8" fill="#EAF3F9" stroke="#0072B2" stroke-width="2.4"/>
+        <rect x="490" y="62" width="52" height="52" rx="8" fill="#FFFFFF" stroke="#6F848C"/>
+        <rect x="566" y="62" width="52" height="52" rx="8" fill="#EAF3F9" stroke="#0072B2" stroke-width="2.4"/>
+      </g>
+      <g font-size="24" font-weight="650" fill="#0F2A3A" text-anchor="middle">
+        <text x="60" y="97">H</text><text x="136" y="97">K</text><text x="212" y="97">H</text><text x="288" y="97">T</text>
+        <text x="364" y="97">K</text><text x="440" y="97">T</text><text x="516" y="97">R</text><text x="592" y="97">T</text>
+      </g>
+      <g font-size="12.5" text-anchor="middle">
+        <text x="60" y="136" fill="#566B76">–</text><text x="136" y="136" fill="#566B76">–</text>
+        <text x="212" y="136" fill="#0072B2" font-weight="700">Match</text><text x="288" y="136" fill="#566B76">No</text>
+        <text x="364" y="136" fill="#8A5C00" font-weight="600">No: a lure</text><text x="440" y="136" fill="#0072B2" font-weight="700">Match</text>
+        <text x="516" y="136" fill="#566B76">No</text><text x="592" y="136" fill="#0072B2" font-weight="700">Match</text>
+      </g>
+      <text x="364" y="156" font-size="11" fill="#8A5C00" text-anchor="middle">this K was 3 back, not 2</text>
+    </svg>
+    <figcaption><b>2-back.</b> An arc means the item two back is the same: press Match. The second K is a <b>lure</b>: the earlier K was three back, not two, so you do nothing. The first two items cannot be matches yet.</figcaption>
+  </figure>
+
+  <h3>How a block runs</h3>
+  <div class="with-shot">
+    <figure class="shot" data-shot="session-nback" data-size="phone" data-viewport="390x844" data-state="A running Dual n-back block at 2-back on a phone, light theme: the 3×3 grid with one lit square, the Position and Sound pads, nothing else on screen">
+      <div class="frame"><img src="assets/shots/session-nback.png" alt="A Dual n-back block on a phone: a 3×3 grid with one lit square and two answer pads"><div class="ph"><b>session-nback</b><span>phone 390 × 844 · light</span><span>A running Dual n-back block</span></div></div>
+      <figcaption><b>A Dual n-back block:</b> just the grid and the two pads.</figcaption>
+    </figure>
+    <div class="text">
+      <ul>
+        <li>Each item shows for half a second; a new one comes every 3 seconds (2.5 seconds at the fast pace).</li>
+        <li>A block has 20 + <i>n</i> items. The first <i>n</i> cannot be matches, so 20 are scored: 6 matches and 14 non-matches. A block takes about 70 seconds.</li>
+        <li>From 2-back on, 4 of the 14 non-matches are <b>lures</b>: the same item one step nearer or further than <i>n</i>. They catch you when you press on “familiar” instead of “exactly <i>n</i> back”.</li>
+        <li>Your <b>level</b> is <i>n</i> plus the pace: each <i>n</i> has a standard half-step and then a fast one, up to 16-back (Switch: 9-back). Hardly anyone gets near the top.</li>
+        <li>During a block nothing but the task is on screen: no score, no timer, no level.</li>
+      </ul>
+      <div class="box tip">
+        <span class="label">Tip</span>
+        <p>If an item feels familiar, check its distance before you press. Learn → Strategy cards has ideas such as grouping: hold the last <i>n</i> items as one small set and compare item by item.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Five versions</h3>
+  <p>Each version keeps its own level. In the three executive versions you don’t just hold the steps, you work on them: each one changes by a rule before you compare.</p>
+  <table class="compact">
+    <thead><tr><th style="width:17%">Version</th><th style="width:33%">What you see</th><th style="width:30%">Press Match when…</th><th>Opens</th></tr></thead>
+    <tbody>
+      <tr><td><b>Plain</b></td><td>One stream: grid squares, consonants, digits, days, months, clock hours, compass points, shapes, glyphs or tones</td><td>the item is the same as <i>n</i> back</td><td>from the start</td></tr>
+      <tr><td><b>Dual</b></td><td>A square’s position and a sound, as two independent streams</td><td><kbd>J</kbd> for a position match, <kbd>K</kbd> for a sound match, both when both match</td><td>by choice, any time</td></tr>
+      <tr><td><b>Transform</b> <span class="tag">experimental</span></td><td>Days of the week as words (Cao et al. 2026); later also months, clock hours, compass points or a ring of squares</td><td>the item is the <b>next</b> one after the item <i>n</i> back: “the day after”. Later blocks may use another rule (two after, one before), shown on the rule card</td><td rowspan="3">when Plain reaches 2-back (usually in session 1 or 2), or at once if you pass the version’s lesson check</td></tr>
+      <tr><td><b>Arithmetic</b> <span class="tag">experimental</span></td><td>Small sums such as 3 + 4, with answers from 1 to 9</td><td>the answer equals the answer <i>n</i> back (the sums always look different)</td></tr>
+      <tr><td><b>Switch</b> <span class="tag">experimental</span></td><td>A digit or shape in a grid position, with a cue above it: WHAT or WHERE</td><td>the feature the cue names is the same as <i>n</i> back</td></tr>
+    </tbody>
+  </table>
+
+  <figure class="diagram">
+    <svg viewBox="0 0 640 122" role="img" aria-label="Transform at 2-back: Tue, Sat, Wed is a match; Tue, Sat, Tue is a lure">
+      <defs><marker id="ah2" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0072B2"/></marker></defs>
+      <path d="M230 40C230 18 50 18 50 40" fill="none" stroke="#0072B2" stroke-width="2.2" marker-end="url(#ah2)"/>
+      <text x="140" y="16" font-size="11.5" font-weight="600" fill="#0072B2" text-anchor="middle">the day after Tue</text>
+      <path d="M580 40C580 18 400 18 400 40" fill="none" stroke="#B07A00" stroke-width="2" stroke-dasharray="6 4"/>
+      <text x="490" y="16" font-size="11.5" font-weight="600" fill="#8A5C00" text-anchor="middle">the same day</text>
+      <g stroke-width="1.6" fill="#FFFFFF">
+        <rect x="18" y="42" width="64" height="40" rx="7" stroke="#6F848C"/><rect x="108" y="42" width="64" height="40" rx="7" stroke="#6F848C"/>
+        <rect x="198" y="42" width="64" height="40" rx="7" stroke="#0072B2" stroke-width="2.4" fill="#EAF3F9"/>
+        <rect x="368" y="42" width="64" height="40" rx="7" stroke="#6F848C"/><rect x="458" y="42" width="64" height="40" rx="7" stroke="#6F848C"/>
+        <rect x="548" y="42" width="64" height="40" rx="7" stroke="#B07A00" stroke-dasharray="5 3" fill="#FBF2DF"/>
+      </g>
+      <g font-size="17" font-weight="650" fill="#0F2A3A" text-anchor="middle">
+        <text x="50" y="68">Tue</text><text x="140" y="68">Sat</text><text x="230" y="68">Wed</text>
+        <text x="400" y="68">Tue</text><text x="490" y="68">Sat</text><text x="580" y="68">Tue</text>
+      </g>
+      <text x="140" y="106" font-size="12.5" text-anchor="middle"><tspan font-weight="700" fill="#0072B2">Match:</tspan><tspan fill="#0F2A3A"> Wed comes after Tue</tspan></text>
+      <text x="490" y="106" font-size="12.5" text-anchor="middle"><tspan font-weight="700" fill="#8A5C00">No:</tspan><tspan fill="#0F2A3A"> that was the old rule (a lure)</tspan></text>
+      <line x1="320" y1="34" x2="320" y2="112" stroke="#CFD9D9" stroke-width="1"/>
+    </svg>
+    <figcaption><b>Transform at 2-back.</b> Compare each day with the day <i>after</i> the one two back. The same day as two back is a lure: it was the match in traditional n-back, but not here. Sunday wraps around to Monday.</figcaption>
+  </figure>
+
+  <p>The executive versions add lures of their own: in Transform, the same day as <i>n</i> back; in Arithmetic, a sum that starts with the same number but gives another answer; in Switch, a match on the feature the cue did not name. They make sure that a loose strategy cannot carry you up the ladder. Switch also has extra steps: cue changes on a quarter of the items, then on half, then the fast pace.</p>
+
+  <div class="box honest">
+    <span class="label">Honest note · why “experimental”</span>
+    <p>Executive n-back rests on one small study: 15 people per group and no untrained control group (chapter 10). Transform uses Cao and colleagues’ task so that the community can test it; Arithmetic and Switch are our own designs.</p>
+  </div>
+
+  <div class="box deep">
+    <span class="label">In depth · Cao’s procedure in the Protocols style</span>
+    <p>The Protocols style (chapter 7) runs Cao and colleagues’ procedure as closely as the paper allows: Transform with days; 500 ms per item plus 2.5 s; blocks of 20 + <i>n</i> items with 6 targets, pressing only on targets; 20 blocks per session (about 30 minutes), starting at 1-back. Within a session, <i>n</i> goes up after more than 18 of the 20 scored items are right and down after 5 or more errors; each new session starts 2 levels below where the last one ended. Six sessions, 1–2 days apart, then a 10-block check after about 3 months (offered from day 80). The paper does not report the response key, lures, feedback or whether Sunday wraps to Monday: Long-Horizon wraps the week and, as in the paper, leaves lures uncontrolled. A traditional arm (Plain n-back with days) is there for comparisons.</p>
+  </div>
+
+  <h3>Learning by playing</h3>
+  <div class="with-shot">
+    <figure class="shot" data-shot="tutorial-tape" data-size="phone" data-viewport="390x844" data-state="The n-back lesson, step 'Your turn: 2-back', light theme: the memory tape of letters with the frame two back, the current letter, the callout about a lure, the Match / No match buttons">
+      <div class="frame"><img src="assets/shots/tutorial-tape.png" alt="The n-back lesson: a memory tape of recent letters with a frame on the letter two back"><div class="ph"><b>tutorial-tape</b><span>phone 390 × 844 · light</span><span>The lesson’s memory tape at 2-back</span></div></div>
+      <figcaption><b>The memory tape</b> frames the letter to compare with, then fades away.</figcaption>
+    </figure>
+    <div class="text">
+      <p>The <b>n-back lesson</b> (about 6 minutes) uses letters on a <b>memory tape</b>: the recent items in a row, with a frame on the one to compare. You try 1-back at your own pace, with feedback on each answer; then the tape fades, the pace picks up and doing nothing becomes the answer. At 2-back, lures are pointed out and you tap the letter you compare with.</p>
+      <p>A <b>check block</b> closes the lesson: at 2-back, catch at least 4 of the 6 matches with at most 2 presses on the 14 non-matches. If it goes wrong, a mini-lesson targets the reason (too many presses, presses on lures, the wrong key, late presses). After two tries without a pass, training starts with the tape visible until two blocks reach the criterion; these assisted blocks stay out of your statistics.</p>
+      <p>Dual, Transform, Arithmetic and Switch each get a short lesson before their first block. Their checks run at 1-back, because they test the rule, not your memory span.</p>
+    </div>
+  </div>
+
+  <div class="box deep">
+    <span class="label">In depth · how a block is scored</span>
+    <p>For each stream Long-Horizon counts hits (matches caught), misses, false presses, presses on lures, and correct rejections. The block score is <b>balanced accuracy</b>: the hit rate and the correct-rejection rate, averaged, so pressing on everything scores only 50 %; in Dual the weaker stream decides. Sensitivity (d′), response bias and the median reaction time of hits are logged and shown under <b>Details</b> in the debrief. Levels move on accuracy only: devices add a constant 50–110 ms to reaction times, so reaction time is compared only within one person on one device.</p>
+  </div>
+</section>
+
+<!-- ================================================================ 4 RELATIONS -->
+<section class="chapter" id="relations">
+  <header class="ch-head">
+    <p class="ch-num"><b>4</b> · The training</p>
+    <h2>Relations: Equal Steps, the grid and the stream</h2>
+    <svg class="ruler" viewBox="0 0 1640 26" preserveAspectRatio="none" aria-hidden="true"><path class="maj" d="M0.6 0V26M100.6 0V26M200.6 0V26M300.6 0V26M400.6 0V26M500.6 0V26M600.6 0V26M700.6 0V26M800.6 0V26M900.6 0V26M1000.6 0V26M1100.6 0V26M1200.6 0V26M1300.6 0V26M1400.6 0V26M1500.6 0V26M1600.6 0V26"/><path class="min" d="M20.5 13V26M40.5 13V26M60.5 13V26M80.5 13V26M120.5 13V26M140.5 13V26M160.5 13V26M180.5 13V26M220.5 13V26M240.5 13V26M260.5 13V26M280.5 13V26M320.5 13V26M340.5 13V26M360.5 13V26M380.5 13V26M420.5 13V26M440.5 13V26M460.5 13V26M480.5 13V26M520.5 13V26M540.5 13V26M560.5 13V26M580.5 13V26M620.5 13V26M640.5 13V26M660.5 13V26M680.5 13V26M720.5 13V26M740.5 13V26M760.5 13V26M780.5 13V26M820.5 13V26M840.5 13V26M860.5 13V26M880.5 13V26M920.5 13V26M940.5 13V26M960.5 13V26M980.5 13V26M1020.5 13V26M1040.5 13V26M1060.5 13V26M1080.5 13V26M1120.5 13V26M1140.5 13V26M1160.5 13V26M1180.5 13V26M1220.5 13V26M1240.5 13V26M1260.5 13V26M1280.5 13V26M1320.5 13V26M1340.5 13V26M1360.5 13V26M1380.5 13V26M1420.5 13V26M1440.5 13V26M1460.5 13V26M1480.5 13V26M1520.5 13V26M1540.5 13V26M1560.5 13V26M1580.5 13V26M1620.5 13V26"/></svg>
+    <p class="lead"><i>Relational integration</i> means holding several items and the relation between them at once: numbers that rise in equal steps, a row of symbols that all match. As a <i>measure</i> it sits close to reasoning; <i>training</i> it has not been shown to help reasoning (chapter 10). All three tasks are labelled experimental.</p>
+  </header>
+
+  <h3>Equal Steps</h3>
+  <p>Wang, Sun and Xiao trained a number-stream task; Long-Horizon calls it Equal Steps. Numbers appear one at a time, at the same pace as n-back. At <b>1-back</b>, press when the step from the last number is the same size as the step before it: 3, 6, <b>9</b> (steps of 3 and 3). At <b>2-back</b>, press when the jump from the number two back equals the previous such jump. Up or down does not matter; only the size of the step counts.</p>
+
+  <figure class="diagram">
+    <svg viewBox="0 0 640 220" role="img" aria-label="Equal Steps with the numbers 3, 6, 9, 8, 7 at 1-back and at 2-back">
+      <text x="0" y="57" font-size="13" font-weight="700" fill="#0F2A3A">1-back</text>
+      <g fill="none" stroke="#6F848C" stroke-width="1.5">
+        <path d="M158 34Q197.5 10 237 34"/><path d="M273 34Q312.5 10 352 34"/><path d="M388 34Q427.5 10 467 34"/><path d="M503 34Q542.5 10 582 34"/>
+      </g>
+      <g font-size="11.5" fill="#3D5562" text-anchor="middle" font-weight="600">
+        <text x="197.5" y="14">step 3</text><text x="312.5" y="14">step 3</text><text x="427.5" y="14">step 1</text><text x="542.5" y="14">step 1</text>
+      </g>
+      <g stroke-width="1.6">
+        <circle cx="140" cy="52" r="21" fill="#FFFFFF" stroke="#6F848C"/><circle cx="255" cy="52" r="21" fill="#FFFFFF" stroke="#6F848C"/>
+        <circle cx="370" cy="52" r="21" fill="#EAF3F9" stroke="#0072B2" stroke-width="2.4"/><circle cx="485" cy="52" r="21" fill="#FFFFFF" stroke="#6F848C"/>
+        <circle cx="600" cy="52" r="21" fill="#EAF3F9" stroke="#0072B2" stroke-width="2.4"/>
+      </g>
+      <g font-size="19" font-weight="650" fill="#0F2A3A" text-anchor="middle">
+        <text x="140" y="59">3</text><text x="255" y="59">6</text><text x="370" y="59">9</text><text x="485" y="59">8</text><text x="600" y="59">7</text>
+      </g>
+      <g font-size="12" text-anchor="middle">
+        <text x="140" y="92" fill="#566B76">–</text><text x="255" y="92" fill="#566B76">–</text>
+        <text x="370" y="92"><tspan fill="#0072B2" font-weight="700">Match</tspan><tspan fill="#3D5562"> 3 = 3</tspan></text>
+        <text x="485" y="92"><tspan fill="#566B76">No</tspan><tspan fill="#3D5562"> 1 ≠ 3</tspan></text>
+        <text x="600" y="92"><tspan fill="#0072B2" font-weight="700">Match</tspan><tspan fill="#3D5562"> 1 = 1</tspan></text>
+      </g>
+      <line x1="0" y1="104" x2="640" y2="104" stroke="#CFD9D9" stroke-width="1"/>
+      <text x="0" y="165" font-size="13" font-weight="700" fill="#0F2A3A">2-back</text>
+      <path d="M263 142Q370 112 477 142" fill="none" stroke="#6F848C" stroke-width="1.5"/>
+      <text x="370" y="121" font-size="11.5" font-weight="600" fill="#3D5562" text-anchor="middle">jump 2 (6 → 8)</text>
+      <path d="M378 180Q485 214 592 180" fill="none" stroke="#0072B2" stroke-width="2"/>
+      <text x="485" y="216" font-size="11.5" font-weight="600" fill="#0072B2" text-anchor="middle">jump 2 (9 → 7): Match</text>
+      <g stroke-width="1.6">
+        <circle cx="140" cy="160" r="21" fill="#FFFFFF" stroke="#6F848C"/><circle cx="255" cy="160" r="21" fill="#FFFFFF" stroke="#6F848C"/>
+        <circle cx="370" cy="160" r="21" fill="#FFFFFF" stroke="#6F848C"/><circle cx="485" cy="160" r="21" fill="#FFFFFF" stroke="#6F848C"/>
+        <circle cx="600" cy="160" r="21" fill="#EAF3F9" stroke="#0072B2" stroke-width="2.4"/>
+      </g>
+      <g font-size="19" font-weight="650" fill="#0F2A3A" text-anchor="middle">
+        <text x="140" y="167">3</text><text x="255" y="167">6</text><text x="370" y="167">9</text><text x="485" y="167">8</text><text x="600" y="167">7</text>
+      </g>
+    </svg>
+    <figcaption><b>The same numbers, two ways.</b> At 1-back, 9 and 7 are matches because each repeats the step before it. At 2-back, 7 is a match because the jump from 9 to 7 equals the jump from 6 to 8. This is the worked example from Wang and colleagues’ paper.</figcaption>
+  </figure>
+
+  <ul>
+    <li><b>Levels:</b> 1-back, then 2-back, each with numbers up to 9, 19, 29 and 39: the paper’s eight levels. Beyond the paper, a fast pace and 3-back give headroom.</li>
+    <li><b>Where the paper is silent, the choices are ours:</b> 500 ms per number plus 2.5 s; <i>n</i> + 1 lead-in numbers, then 20 scored with 6 matches; 4 lures, where the step is off by one; press only on matches.</li>
+    <li>In the Varied style it joins in session 3, after a short lesson: a worked example, steps written under the numbers, then jumps drawn as arcs, and a check.</li>
+  </ul>
+
+  <div class="box deep">
+    <span class="label">In depth · Wang’s procedure, and our reading of the paper</span>
+    <p>The Protocols style follows Wang and colleagues as closely as the paper allows: 5 blocks of 20 numbers a day for 30 days; the level goes up if the day’s accuracy is above .80 and down if it is below .50, and that accuracy, shown at the end of the day, is the only feedback. In the study, participants chose their level each day by this rule; Long-Horizon applies it for you. The paper does not say how many items are matches, so this protocol makes 10 of the 20 matches, which lets the “below .50” rule work. Counting only the size of the step is the one reading of the paper that fits every mark in its worked example.</p>
+  </div>
+
+  <h3>Relation Grid</h3>
+  <div class="with-shot">
+    <figure class="shot" data-shot="session-grid" data-size="phone" data-viewport="390x844" data-state="A Relation Grid at tier T1 (Same, digit tails), step 1, on a phone, light theme: the rule at the top, the 3×3 grid, the No (left) and Match (right) pads">
+      <div class="frame"><img src="assets/shots/session-grid.png" alt="A Relation Grid on a phone: the rule at the top, a 3 by 3 grid and the No and Match buttons"><div class="ph"><b>session-grid</b><span>phone 390 × 844 · light</span><span>A Relation Grid, tier 1</span></div></div>
+      <figcaption><b>The Relation Grid</b> on a phone: No on the left, Match on the right.</figcaption>
+    </figure>
+    <div class="text">
+      <p>A 3×3 grid of cells, each a short group of symbols. Only one position in each cell counts: the last symbol, or the middle one for icons. Decide whether any line follows the rule at the top, and answer <span class="nowrap"><b>Match</b> (<kbd>J</kbd>)</span> or <span class="nowrap"><b>No</b> (<kbd>F</kbd>)</span>. Each grid ends at your answer or when its time runs out.</p>
+      <p>Half the grids hold exactly one line that fits, none holds two, and grids come in pairs with the same symbol counts, so only checking the lines beats chance. The task comes from measurement research (Chuderski 2014; Bateman et al. 2019; Li &amp; Birney 2026).</p>
+      <figure class="diagram" style="width:54%;margin:2mm 0 0">
+        <svg viewBox="0 0 300 256" role="img" aria-label="A 3 by 3 Relation Grid whose middle row ends 7, 7, 7">
+          <rect x="0" y="0" width="300" height="32" rx="6" fill="#EEF2F1"/>
+          <text x="150" y="21" font-size="12.5" font-weight="650" fill="#0F2A3A" text-anchor="middle">SAME: do the last digits of a line match?</text>
+          <g fill="#FFFFFF" stroke="#CFD9D9" stroke-width="1.4">
+            <rect x="10" y="42" width="88" height="56" rx="6"/><rect x="106" y="42" width="88" height="56" rx="6"/><rect x="202" y="42" width="88" height="56" rx="6"/>
+            <rect x="10" y="106" width="88" height="56" rx="6"/><rect x="106" y="106" width="88" height="56" rx="6"/><rect x="202" y="106" width="88" height="56" rx="6"/>
+            <rect x="10" y="170" width="88" height="56" rx="6"/><rect x="106" y="170" width="88" height="56" rx="6"/><rect x="202" y="170" width="88" height="56" rx="6"/>
+          </g>
+          <rect x="5" y="101" width="290" height="66" rx="9" fill="none" stroke="#0072B2" stroke-width="3"/>
+          <g font-size="22" text-anchor="middle" style="font-variant-numeric: tabular-nums">
+            <text x="54" y="78"><tspan fill="#8DA4AF">47</tspan><tspan fill="#0F2A3A" font-weight="700">2</tspan></text>
+            <text x="150" y="78"><tspan fill="#8DA4AF">81</tspan><tspan fill="#0F2A3A" font-weight="700">5</tspan></text>
+            <text x="246" y="78"><tspan fill="#8DA4AF">33</tspan><tspan fill="#0F2A3A" font-weight="700">9</tspan></text>
+            <text x="54" y="142"><tspan fill="#8DA4AF">60</tspan><tspan fill="#0F2A3A" font-weight="700">7</tspan></text>
+            <text x="150" y="142"><tspan fill="#8DA4AF">15</tspan><tspan fill="#0F2A3A" font-weight="700">7</tspan></text>
+            <text x="246" y="142"><tspan fill="#8DA4AF">92</tspan><tspan fill="#0F2A3A" font-weight="700">7</tspan></text>
+            <text x="54" y="206"><tspan fill="#8DA4AF">28</tspan><tspan fill="#0F2A3A" font-weight="700">1</tspan></text>
+            <text x="150" y="206"><tspan fill="#8DA4AF">54</tspan><tspan fill="#0F2A3A" font-weight="700">3</tspan></text>
+            <text x="246" y="206"><tspan fill="#8DA4AF">76</tspan><tspan fill="#0F2A3A" font-weight="700">5</tspan></text>
+          </g>
+          <text x="150" y="250" font-size="12.5" text-anchor="middle"><tspan font-weight="700" fill="#0072B2">Match:</tspan><tspan fill="#0F2A3A"> the middle row ends 7, 7, 7</tspan></text>
+        </svg>
+        <figcaption>Tier 1, “Same”: only the last digit of each cell counts.</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <p>The grid has two kinds of difficulty: <b>tiers</b> change the rule, and <b>steps</b> within each tier add time pressure and distractions. The next tier opens when you reach step 6 of the current one (the criterion at 4.5 seconds with distractors). A new tier starts one step below what the learner model predicts (often step 2–4), moves two steps at a time until its first step down, and gets a short lesson first. Earlier tiers keep appearing, so nobody hits a dead end.</p>
+
+  <div class="grid2">
+    <table class="compact">
+      <caption>Tiers: the rule</caption>
+      <thead><tr><th>Tier</th><th>Rule · lines</th></tr></thead>
+      <tbody>
+        <tr><td><b>T1</b></td><td>Same · rows and columns</td></tr>
+        <tr><td><b>T2</b></td><td>Ascending (direction stated) · rows and columns</td></tr>
+        <tr><td><b>T3</b></td><td>Different · rows and columns</td></tr>
+        <tr><td><b>T4</b></td><td>Same or Different, one rule per block · rows, columns and diagonals</td></tr>
+        <tr><td><b>T5</b></td><td>Five the same · five-cell crosses and T shapes</td></tr>
+        <tr><td><b>T6</b></td><td>Two features, e.g. same shape and all-different fill · rows and columns</td></tr>
+        <tr><td><b>T7</b></td><td>A 4×4 grid, same or different on lines of four</td></tr>
+        <tr><td><b>T8</b></td><td>Five different · optional and very hard</td></tr>
+      </tbody>
+    </table>
+    <table class="compact">
+      <caption>Steps within every tier: the pressure</caption>
+      <thead><tr><th>Step</th><th class="num">Time</th><th>What changes</th></tr></thead>
+      <tbody>
+        <tr><td><b>1</b></td><td class="num">8.0 s</td><td>1–4 cells stay from the last grid (a learning step)</td></tr>
+        <tr><td><b>2</b></td><td class="num">5.5 s</td><td>cells still stay</td></tr>
+        <tr><td><b>3</b></td><td class="num">5.5 s</td><td>all cells replaced</td></tr>
+        <tr><td><b>4</b></td><td class="num">4.5 s</td><td>–</td></tr>
+        <tr><td><b>5</b></td><td class="num">4.5 s</td><td>+ 6 look-alike symbols where they do not count</td></tr>
+        <tr><td><b>6</b></td><td class="num">4.5 s</td><td>+ lure lines (lines that almost fit)</td></tr>
+        <tr><td><b>7</b></td><td class="num">3.5 s</td><td>–</td></tr>
+        <tr><td><b>8</b></td><td class="num">2.75 s</td><td>–</td></tr>
+        <tr><td><b>9</b></td><td class="num">2.0 s</td><td>the floor</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>The content changes too: digits, letters, icons, dot counts, bar orientations and new glyphs; dots placed in small frames are kept for the Lab and never trained. The <b>lesson</b> (about 4 minutes, just before your first grid) shows a row, a column and a lure line, then slow grids and a check: find at least 7 of the 10 grids with a line, with at most 2 false Matches. The lowest steps of every tier are slow learning steps, because time pressure blocks relational learning (Chuderski 2016).</p>
+
+  <h3>Relation Stream</h3>
+  <p>The original monitoring form of the task, after Oberauer and colleagues: the grid stays on screen while one cell changes at a time, and you press <b>Match</b> as soon as a line with the pattern appears. Its six steps: a change every 2.0 seconds with one cell changing, then 1.5 s, 1.0 s, 1.0 s with two cells, 0.75 s with two, and 0.75 s with three. It opens with tier T3, joins the Varied style in session 10, and runs at most one block per session. A new line can only appear through the cell that just changed, so look there first.</p>
+</section>
+
+<!-- ================================================================ 5 SPAN -->
+<section class="chapter" id="span">
+  <header class="ch-head">
+    <p class="ch-num"><b>5</b> · The training</p>
+    <h2>Span (opt-in)</h2>
+    <svg class="ruler" viewBox="0 0 1640 26" preserveAspectRatio="none" aria-hidden="true"><path class="maj" d="M0.6 0V26M100.6 0V26M200.6 0V26M300.6 0V26M400.6 0V26M500.6 0V26M600.6 0V26M700.6 0V26M800.6 0V26M900.6 0V26M1000.6 0V26M1100.6 0V26M1200.6 0V26M1300.6 0V26M1400.6 0V26M1500.6 0V26M1600.6 0V26"/><path class="min" d="M20.5 13V26M40.5 13V26M60.5 13V26M80.5 13V26M120.5 13V26M140.5 13V26M160.5 13V26M180.5 13V26M220.5 13V26M240.5 13V26M260.5 13V26M280.5 13V26M320.5 13V26M340.5 13V26M360.5 13V26M380.5 13V26M420.5 13V26M440.5 13V26M460.5 13V26M480.5 13V26M520.5 13V26M540.5 13V26M560.5 13V26M580.5 13V26M620.5 13V26M640.5 13V26M660.5 13V26M680.5 13V26M720.5 13V26M740.5 13V26M760.5 13V26M780.5 13V26M820.5 13V26M840.5 13V26M860.5 13V26M880.5 13V26M920.5 13V26M940.5 13V26M960.5 13V26M980.5 13V26M1020.5 13V26M1040.5 13V26M1060.5 13V26M1080.5 13V26M1120.5 13V26M1140.5 13V26M1160.5 13V26M1180.5 13V26M1220.5 13V26M1240.5 13V26M1260.5 13V26M1280.5 13V26M1320.5 13V26M1340.5 13V26M1360.5 13V26M1380.5 13V26M1420.5 13V26M1440.5 13V26M1460.5 13V26M1480.5 13V26M1520.5 13V26M1540.5 13V26M1560.5 13V26M1580.5 13V26M1620.5 13V26"/></svg>
+    <p class="lead">Span trains the storage-and-processing side of working memory: you hold a list while you do something else in between. It is off until you turn it on.</p>
+  </header>
+  <ul>
+    <li><b>How it works:</b> a sum alternates with an item to remember. “True or false?” asks if “7 − 3 = 4” is right; answer <b>True</b> or <b>False</b>, then a letter shows for one second. After 2 to 9 such pairs, you recall the items in order on a keypad.</li>
+    <li><b>Versions:</b> Operation span (letters), Symbol span (symbols) and Backward span (recall in reverse order).</li>
+    <li><b>Timing:</b> each sum may take up to a personal limit, your average plus 2.5 standard deviations from practice, as in the automated operation span (Unsworth et al. 2005). Recall is untimed.</li>
+    <li><b>Scoring:</b> the share of items recalled in the right position. A block can move up only when at least 85 % of the sums are judged right; the list grows after 80 % recall or more and shrinks below 60 % (lists of 2 to 9 items; your first length comes from the learner model). One of a block’s three lists may be lost to a timing hiccup and the block still counts.</li>
+  </ul>
+  <p><b>Why it is off at first.</b> During the 20-session programme Span stays off, so that the Lab can test whether n-back and relations training carry over to complex span, which was Cao and colleagues’ main outcome; the Lab’s span test is spatial, Span’s training is not. Turn it on in Settings whenever you like; it is offered after the programme and is never part of Study mode. With Span on, a session has 15 blocks and a 40/35/25 balance of n-back, relations and span.</p>
+  <div class="box honest">
+    <span class="label">Honest note</span>
+    <p>In the only trial that compared the facets of working memory against an active control, storage-and-processing training transferred to working memory and reasoning (von Bastian &amp; Oberauer 2013). That is a single study, and we could read only its abstract.</p>
+  </div>
+</section>
+
+<!-- ================================================================ 6 VARIETY -->
+<section class="chapter" id="variety">
+  <header class="ch-head">
+    <p class="ch-num"><b>6</b> · The training</p>
+    <h2>Variety and interleaving</h2>
+    <svg class="ruler" viewBox="0 0 1640 26" preserveAspectRatio="none" aria-hidden="true"><path class="maj" d="M0.6 0V26M100.6 0V26M200.6 0V26M300.6 0V26M400.6 0V26M500.6 0V26M600.6 0V26M700.6 0V26M800.6 0V26M900.6 0V26M1000.6 0V26M1100.6 0V26M1200.6 0V26M1300.6 0V26M1400.6 0V26M1500.6 0V26M1600.6 0V26"/><path class="min" d="M20.5 13V26M40.5 13V26M60.5 13V26M80.5 13V26M120.5 13V26M140.5 13V26M160.5 13V26M180.5 13V26M220.5 13V26M240.5 13V26M260.5 13V26M280.5 13V26M320.5 13V26M340.5 13V26M360.5 13V26M380.5 13V26M420.5 13V26M440.5 13V26M460.5 13V26M480.5 13V26M520.5 13V26M540.5 13V26M560.5 13V26M580.5 13V26M620.5 13V26M640.5 13V26M660.5 13V26M680.5 13V26M720.5 13V26M740.5 13V26M760.5 13V26M780.5 13V26M820.5 13V26M840.5 13V26M860.5 13V26M880.5 13V26M920.5 13V26M940.5 13V26M960.5 13V26M980.5 13V26M1020.5 13V26M1040.5 13V26M1060.5 13V26M1080.5 13V26M1120.5 13V26M1140.5 13V26M1160.5 13V26M1180.5 13V26M1220.5 13V26M1240.5 13V26M1260.5 13V26M1280.5 13V26M1320.5 13V26M1340.5 13V26M1360.5 13V26M1380.5 13V26M1420.5 13V26M1440.5 13V26M1460.5 13V26M1480.5 13V26M1520.5 13V26M1540.5 13V26M1560.5 13V26M1580.5 13V26M1620.5 13V26"/></svg>
+    <p class="lead">Long-Horizon starts narrow and then mixes things up. New tasks are practised on their own first; later, versions take turns; finally they come in random order.</p>
+  </header>
+
+  <figure class="diagram">
+    <svg viewBox="0 0 640 138" role="img" aria-label="When each version joins in the Varied style, sessions 1 to 12, and the blocked, taking-turns and random phases">
+      <g font-size="12" fill="#0F2A3A" font-weight="600">
+        <text x="30" y="16"><tspan fill="#B07A00" font-weight="700">S1 </tspan>Plain n-back + Relation Grid T1</text>
+        <text x="134" y="37"><tspan fill="#B07A00" font-weight="700">S3 </tspan>Equal Steps</text>
+        <text x="290" y="16"><tspan fill="#B07A00" font-weight="700">S6 </tspan>Arithmetic</text>
+        <text x="498" y="16"><tspan fill="#B07A00" font-weight="700">S10 </tspan>Relation Stream</text>
+        <text x="82" y="88"><tspan fill="#B07A00" font-weight="700">S2 </tspan>Transform</text>
+        <text x="186" y="88"><tspan fill="#B07A00" font-weight="700">S4 </tspan>Switch</text>
+        <text x="394" y="88"><tspan fill="#B07A00" font-weight="700">S8 </tspan>Dual</text>
+      </g>
+      <g stroke="#6F848C" stroke-width="1">
+        <line x1="30" y1="20" x2="30" y2="56"/><line x1="134" y1="41" x2="134" y2="56"/><line x1="290" y1="20" x2="290" y2="56"/><line x1="498" y1="20" x2="498" y2="56"/>
+        <line x1="82" y1="64" x2="82" y2="76"/><line x1="186" y1="64" x2="186" y2="76"/><line x1="394" y1="64" x2="394" y2="76"/>
+      </g>
+      <line x1="20" y1="60" x2="626" y2="60" stroke="#0F2A3A" stroke-width="1.6"/>
+      <g stroke="#0F2A3A" stroke-width="1.2">
+        <path d="M30 55v10M82 55v10M134 55v10M186 55v10M238 57v6M290 55v10M342 57v6M394 55v10M446 57v6M498 55v10M550 57v6M602 57v6"/>
+      </g>
+      <g fill="#E69F00"><circle cx="30" cy="60" r="4.5"/><circle cx="82" cy="60" r="4.5"/><circle cx="134" cy="60" r="4.5"/><circle cx="186" cy="60" r="4.5"/><circle cx="290" cy="60" r="4.5"/><circle cx="394" cy="60" r="4.5"/><circle cx="498" cy="60" r="4.5"/></g>
+      <text x="626" y="52" font-size="11" fill="#566B76" text-anchor="end">sessions →</text>
+      <rect x="22" y="108" width="120" height="22" rx="4" fill="#E3EAE9"/><text x="82" y="123" font-size="11.5" fill="#0F2A3A" text-anchor="middle" font-weight="600">S1–3 blocked</text>
+      <rect x="178" y="108" width="120" height="22" rx="4" fill="#D3E2EA"/><text x="238" y="123" font-size="11.5" fill="#0F2A3A" text-anchor="middle" font-weight="600">S4–6 taking turns</text>
+      <rect x="334" y="108" width="292" height="22" rx="4" fill="#EAF3F9" stroke="#0072B2" stroke-width="1"/><text x="480" y="123" font-size="11.5" fill="#0F2A3A" text-anchor="middle" font-weight="600">S7 on: random, at most 2 of a version in a row</text>
+    </svg>
+    <figcaption><b>When versions join, in the Varied style</b> (sessions 1–12). A version joins only once it is open; grid tiers and Equal Steps levels open by their own ladders.</figcaption>
+  </figure>
+
+  <ul>
+    <li><b>Never the same block twice:</b> every block is a fresh sequence from a logged random seed.</li>
+    <li><b>The ramp:</b> sessions 1–3 are blocked, each version in one stretch; sessions 4–6 take turns; from session 7 the order is random, with at most 2 blocks of a version in a row.</li>
+    <li><b>One new thing at a time,</b> in the order above; glyph sets change every 5 sessions. Once everything is in, Today says “All versions introduced” and the mixing continues; ladders never dead-end.</li>
+    <li><b>A rule card before every block</b> shows the version, the rule, the keys and a one-line example, so mixing never leaves you guessing. The first blocks on each new version are logged as a learning curve.</li>
+  </ul>
+
+  <div class="box deep">
+    <span class="label">In depth · why mix, and why not at once</span>
+    <p>Interleaving beat blocked practice in a meta-analysis, g = .42 (about .29 after correcting for bias), mostly in learning categories; for learning words it reverses (Brunmair &amp; Richter 2019). In motor learning, a blocked → serial → random ramp beat both pure schedules (Porter &amp; Magill 2010). Variety slows early learning and helps later generalisation, so newcomers should start narrow (Raviv, Lupyan &amp; Green 2022). No working memory training study has tested interleaving yet: Long-Horizon’s ramp is a reasoned bet, not a proven method.</p>
+  </div>
+</section>
+
+<!-- ================================================================ 7 STYLES -->
+<section class="chapter" id="styles">
+  <header class="ch-head">
+    <p class="ch-num"><b>7</b> · The training</p>
+    <h2>The six training styles</h2>
+    <svg class="ruler" viewBox="0 0 1640 26" preserveAspectRatio="none" aria-hidden="true"><path class="maj" d="M0.6 0V26M100.6 0V26M200.6 0V26M300.6 0V26M400.6 0V26M500.6 0V26M600.6 0V26M700.6 0V26M800.6 0V26M900.6 0V26M1000.6 0V26M1100.6 0V26M1200.6 0V26M1300.6 0V26M1400.6 0V26M1500.6 0V26M1600.6 0V26"/><path class="min" d="M20.5 13V26M40.5 13V26M60.5 13V26M80.5 13V26M120.5 13V26M140.5 13V26M160.5 13V26M180.5 13V26M220.5 13V26M240.5 13V26M260.5 13V26M280.5 13V26M320.5 13V26M340.5 13V26M360.5 13V26M380.5 13V26M420.5 13V26M440.5 13V26M460.5 13V26M480.5 13V26M520.5 13V26M540.5 13V26M560.5 13V26M580.5 13V26M620.5 13V26M640.5 13V26M660.5 13V26M680.5 13V26M720.5 13V26M740.5 13V26M760.5 13V26M780.5 13V26M820.5 13V26M840.5 13V26M860.5 13V26M880.5 13V26M920.5 13V26M940.5 13V26M960.5 13V26M980.5 13V26M1020.5 13V26M1040.5 13V26M1060.5 13V26M1080.5 13V26M1120.5 13V26M1140.5 13V26M1160.5 13V26M1180.5 13V26M1220.5 13V26M1240.5 13V26M1260.5 13V26M1280.5 13V26M1320.5 13V26M1340.5 13V26M1360.5 13V26M1380.5 13V26M1420.5 13V26M1440.5 13V26M1460.5 13V26M1480.5 13V26M1520.5 13V26M1540.5 13V26M1560.5 13V26M1580.5 13V26M1620.5 13V26"/></svg>
+    <p class="lead">Research on practice points in different directions: the fastest way to get good at a task is not obviously the best way to make the gains carry over. Rather than hide that, Long-Horizon offers six styles. Varied is the default; the others are one tap away in <b>Settings → Training style</b>. Switching never loses anything, because levels belong to task versions.</p>
+  </header>
+
+  <table class="compact">
+    <thead><tr><th style="width:14%">Style</th><th style="width:15%">Aims for</th><th>How it runs</th><th style="width:18%">What it gives up</th></tr></thead>
+    <tbody>
+      <tr><td><b>Varied</b><br><span class="muted">the default</span></td><td>about 80 % (up at .87, down below .73)</td><td>The ramp and introduction order of chapter 6; a reflection prompt every 3rd session; strategy cards on request.</td><td>Slower early gains; untested inside working memory training</td></tr>
+      <tr><td><b>Sprint</b></td><td>about 85 % (.92 / .78)</td><td>Blocked practice on one fixed version per task (Plain n-back with grid positions, or an executive version you pick; the Relation Grid with digits); double steps until your first step down each session; strategy cards in sessions 1–3; a flash after each answer; up to 2 sessions a day, 3 hours apart.</td><td>Breadth: labelled “trained-task gains”</td></tr>
+      <tr><td><b>Stretch</b></td><td>about 72 % (.80 / .64)</td><td>Opens after 6 counted sessions. Random order and harder <i>kinds</i> of difficulty: 6 lures, the fast pace earlier, the next tier at a longer time rather than a shorter time; a summary every 2nd block, level changes revealed at the end; 20 hours between counted sessions, at most 4 a week.</td><td>The best learning rate; more people give up</td></tr>
+      <tr><td><b>Mastery Path</b></td><td>a pass bar per unit</td><td>A fixed path of units, each a version at a target level. A unit is passed when 2 of its last 3 blocks reach .87 (n-back and Equal Steps) or .85 (Relation Grid); next session, a check on fresh material must reach .80 or a short corrective cycle follows; reviews come 2, 7 and 21 days later.</td><td>Variety and time</td></tr>
+      <tr><td><b>Protocols</b></td><td>each paper’s own rule</td><td>Runs published procedures as closely as each paper allows (where a paper is silent, Long-Horizon’s choices are listed in chapters 3 and 4): Cao 2026 executive n-back and its traditional arm, Wang 2025 Equal Steps, Jaeggi 2008 dual n-back (up with fewer than 3 errors per stream, down with more than 5; Jaeggi used spoken consonants, Long-Horizon plays tones unless you choose spoken letters).</td><td>Trains only what each paper trained; Cao’s sessions take about 30 min</td></tr>
+      <tr><td><b>Free play + Coach</b></td><td>your choice (the coach aims at 80 %)</td><td>Pick the version, level and pace (Normal or Fast) of each block and see your predicted score. The coach suggests “At your edge”, “Due for practice”, “Growing fastest” and “New to try”, one card per version. A level moves only when you play at that level.</td><td>People tend to pick easy, massed practice</td></tr>
+    </tbody>
+  </table>
+
+  <p><b>Why six?</b> Each conflict in the research gets a style on each side: mastery gating (Mastery Path) against free practice (Free play); blocked practice (Protocols, Sprint) against interleaving (Varied, Stretch); about 85 % success (Sprint, Mastery Path) against about 80 % (Varied) and about 72 % (Stretch); a taught strategy (Sprint) against discovery with prompts (Varied); fixed material (Sprint) against varied material (Varied); intense practice (Sprint) against strictly spaced practice (Stretch).</p>
+
+  <h3>Choosing a style</h3>
+  <div class="with-shot">
+    <figure class="shot" data-shot="settings-styles" data-size="phone" data-viewport="390x844" data-state="Settings → Training style on a phone, light theme: Varied selected, then Sprint, Stretch and Mastery Path, each with its aim and what it gives up">
+      <div class="frame"><img src="assets/shots/settings-styles.png" alt="Settings on a phone: the training styles, Varied selected, each with what it aims at and what it gives up"><div class="ph"><b>settings-styles</b><span>phone 390 × 844 · light</span><span>Settings → Training style</span></div></div>
+      <figcaption><b>Training style</b> in Settings: each style says what it gives up.</figcaption>
+    </figure>
+    <div class="text">
+      <p>New users start in Varied. <b>Help me choose</b> asks one question: what matters most to you? Getting good at these tasks fast (Sprint), the best chance that it carries over as far as theory can tell (Varied), a structured course (Mastery Path), a hard challenge (Stretch), following the papers (Protocols), or choosing for yourself (Free play).</p>
+      <h4>Sessions and feedback</h4>
+      <ul>
+        <li>At the default length each task gets 1 warm-up block and 6 rated blocks: 14 blocks in all. “Block 7 of 14” counts every block, warm-ups included. Protocols follow their papers: Cao 20 blocks (about 30 min), Wang 5 blocks (about 7 min), Jaeggi 20 dual blocks.</li>
+        <li>One session counts per calendar day (Sprint: two, 3 hours apart). Your weekly target is 3 to 5 (default 4), never above the style’s cap (Stretch: 4). After a session, the summary says when the next one would count.</li>
+        <li>During blocks: nothing in Varied, Mastery Path and Free play (a flash after each answer if you turn it on); a flash by default in Sprint; nothing in Stretch; Protocols do as each paper did.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="box deep">
+    <span class="label">In depth · how levels move (every style except Protocols)</span>
+    <ul>
+      <li><b>Score:</b> balanced accuracy per stream; with two streams, the weaker one decides. Span uses the share of items recalled.</li>
+      <li><b>Controller:</b> after each rated block, up one step if the score reaches the style’s upper line, down one if it falls below the lower line. Every 10 rated blocks the lines are nudged if your real average drifts more than 3 points from the target, because fixed-step rules miss their targets (García-Pérez 1998); the upper line can drop by at most one point, so shortcuts such as pressing on anything familiar stay below every style’s step-up line and cannot lift a level.</li>
+      <li><b>Warm-up and placement:</b> the first block of each task in a session runs below your level and never moves it. A version or grid tier you have never played starts one step below the learner model’s prediction, then moves two steps at a time until its first step down; the debrief calls this “Starting level”.</li>
+      <li><b>Interruptions and fatigue:</b> a block with any pause, or with more than 20 % of its items not counted for timing (chapter 12), moves nothing. If your score falls .15 or more below the session’s first two rated blocks, twice in a row, the app suggests stopping.</li>
+      <li><b>The learner model</b> is an Elo/Rasch-style rating that drives placement, the coach, predicted scores and level-equivalents such as “n-back ≈ 3.5-back”. There is no abstract score, and the model never overrides a style’s rules.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================================================================ 8 LAB -->
+<section class="chapter" id="lab">
+  <header class="ch-head">
+    <p class="ch-num"><b>8</b> · Measuring</p>
+    <h2>The Lab and Study mode</h2>
+    <svg class="ruler" viewBox="0 0 1640 26" preserveAspectRatio="none" aria-hidden="true"><path class="maj" d="M0.6 0V26M100.6 0V26M200.6 0V26M300.6 0V26M400.6 0V26M500.6 0V26M600.6 0V26M700.6 0V26M800.6 0V26M900.6 0V26M1000.6 0V26M1100.6 0V26M1200.6 0V26M1300.6 0V26M1400.6 0V26M1500.6 0V26M1600.6 0V26"/><path class="min" d="M20.5 13V26M40.5 13V26M60.5 13V26M80.5 13V26M120.5 13V26M140.5 13V26M160.5 13V26M180.5 13V26M220.5 13V26M240.5 13V26M260.5 13V26M280.5 13V26M320.5 13V26M340.5 13V26M360.5 13V26M380.5 13V26M420.5 13V26M440.5 13V26M460.5 13V26M480.5 13V26M520.5 13V26M540.5 13V26M560.5 13V26M580.5 13V26M620.5 13V26M640.5 13V26M660.5 13V26M680.5 13V26M720.5 13V26M740.5 13V26M760.5 13V26M780.5 13V26M820.5 13V26M840.5 13V26M860.5 13V26M880.5 13V26M920.5 13V26M940.5 13V26M960.5 13V26M980.5 13V26M1020.5 13V26M1040.5 13V26M1060.5 13V26M1080.5 13V26M1120.5 13V26M1140.5 13V26M1160.5 13V26M1180.5 13V26M1220.5 13V26M1240.5 13V26M1260.5 13V26M1280.5 13V26M1320.5 13V26M1340.5 13V26M1360.5 13V26M1380.5 13V26M1420.5 13V26M1440.5 13V26M1460.5 13V26M1480.5 13V26M1520.5 13V26M1540.5 13V26M1560.5 13V26M1580.5 13V26M1620.5 13V26"/></svg>
+    <p class="lead">The Lab is optional. It measures what your training did, using tests you never practise, so a result means more than “you got better at the game”. Study mode turns it into a real experiment with a control group, run by the community.</p>
+  </header>
+
+  <h3>What the Lab tests</h3>
+  <table class="compact">
+    <thead><tr><th style="width:20%">Part</th><th>Tests</th><th class="num">Minutes</th></tr></thead>
+    <tbody>
+      <tr><td><b>Part A · memory</b></td><td>Check-in (sleep, alertness, expectations); <b>n-back probe</b> with Lab-only glyphs at 2- and 3-back; <b>relation probe</b> with Lab-only content (40 grids, same and different rules); <b>spatial complex span</b> (symmetry judgements and grid locations, 12 trials at loads 2–5); <b>spatial memory updating</b> (10 trials)</td><td class="num">≈ 25</td></tr>
+      <tr><td><b>Part B · reasoning and control</b></td><td>Check-in; <b>generated 3×3 matrices</b> (18 items, 8 options, 1–4 rules, 45 s each); <b>number and letter series</b> (14 typed items); <b>Graph Mapping</b> (16 items); <b>task switching</b> with digits (odd/even or low/high, as a cue says); close-out (effort, help used, strategy)</td><td class="num">≈ 27</td></tr>
+      <tr><td><b>Quick check</b></td><td>Check-in, n-back probe and relation probe</td><td class="num">≈ 12</td></tr>
+      <tr><td><b>Minimum</b></td><td>Check-ins and close-out, n-back probe, relation probe, span, matrices and series</td><td class="num">≈ 36</td></tr>
+      <tr><td><b>Extended</b></td><td>For studies: the standard tests plus location–colour binding</td><td class="num">+ 5</td></tr>
+    </tbody>
+  </table>
+  <ul>
+    <li><b>Generated, solver-checked and never trained:</b> no items come from Raven’s matrices, ICAR or other published tests, and the Lab’s stimulus sets never appear in training. Four parallel forms rotate across your visits. The Lab shows no rewards.</li>
+    <li><b>Two tests mirror the papers:</b> task switching follows Cao and colleagues’ digit design, and the matrices are of the Sandia type (Matzen et al. 2010) that Wang and colleagues used. The complex span is spatial, because letters can be written down at home. Task switching is exploratory: switch costs are known to be unreliable (Hedge et al. 2018).</li>
+    <li><b>Near, mid and far</b> depend on what you trained, so Long-Horizon sets them from your training log. Near: the n-back probe if you trained n-back, the relation probe if you trained the Relation Grid, the spatial span if you trained Span (Equal Steps has no near test yet). Mid: the other memory tests and task switching. Far: matrices, series and Graph Mapping.</li>
+  </ul>
+
+  <h3>When to test</h3>
+  <figure class="diagram">
+    <svg viewBox="0 0 640 112" role="img" aria-label="The Lab schedule: Baseline 1, Baseline 2, sessions 1 to 10, quick check, sessions 11 to 20, post-test, follow-up">
+      <line x1="16" y1="58" x2="628" y2="58" stroke="#0F2A3A" stroke-width="1.4"/>
+      <g stroke="#6F848C" stroke-width="1">
+        <path d="M16 58v-4M28 58v-4M40 58v-4M52 58v-4M64 58v-4M76 58v-7M88 58v-4M100 58v-4M112 58v-4M124 58v-4M136 58v-7M148 58v-4M160 58v-4M172 58v-4M184 58v-4M196 58v-7M208 58v-4M220 58v-4M232 58v-4M244 58v-4M256 58v-7M268 58v-4M280 58v-4M292 58v-4M304 58v-4M316 58v-7M328 58v-4M340 58v-4M352 58v-4M364 58v-4M376 58v-7M388 58v-4M400 58v-4M412 58v-4M424 58v-4M436 58v-7M448 58v-4M460 58v-4M472 58v-4M484 58v-4M496 58v-7M508 58v-4M520 58v-4M532 58v-4M544 58v-4M556 58v-7M568 58v-4M580 58v-4M592 58v-4M604 58v-4M616 58v-7M628 58v-4"/>
+      </g>
+      <rect x="132" y="54" width="186" height="8" rx="3" fill="#009E73"/>
+      <rect x="344" y="54" width="160" height="8" rx="3" fill="#009E73"/>
+      <g fill="#0072B2" stroke="#FFFFFF" stroke-width="2"><circle cx="30" cy="58" r="7"/><circle cx="104" cy="58" r="7"/><circle cx="331" cy="58" r="7"/><circle cx="520" cy="58" r="7"/><circle cx="612" cy="58" r="7"/></g>
+      <g font-size="12" font-weight="650" fill="#0F2A3A">
+        <text x="22" y="36">Baseline 1</text><text x="104" y="22" text-anchor="middle">Baseline 2</text>
+        <text x="331" y="36" text-anchor="middle">Quick check</text><text x="520" y="36" text-anchor="middle">Post-test</text><text x="628" y="22" text-anchor="end">Follow-up</text>
+      </g>
+      <g stroke="#6F848C" stroke-width="1"><line x1="104" y1="26" x2="104" y2="48"/><line x1="612" y1="26" x2="612" y2="48"/></g>
+      <g font-size="11" fill="#00785A" font-weight="600" text-anchor="middle"><text x="225" y="80">sessions 1–10</text><text x="424" y="80">sessions 11–20</text></g>
+      <g font-size="11" fill="#566B76" text-anchor="middle">
+        <text x="104" y="100">2–7 days after Baseline 1</text><text x="331" y="100">before session 11</text><text x="508" y="100">1–3 days after session 20</text><text x="628" y="80" text-anchor="end">8–12 weeks</text><text x="628" y="92" text-anchor="end">later</text>
+      </g>
+    </svg>
+    <figcaption><b>The Lab schedule with “Measure first”.</b> Blue dots are Lab visits, green bars are training. Reasoning tests run only at the baselines, the Post-test and the Follow-up.</figcaption>
+  </figure>
+  <div class="with-shot">
+    <figure class="shot" data-shot="lab-home" data-size="phone" data-viewport="390x844" data-crop="the Next visit card" data-state="Lab home on a phone, light theme, for someone who chose Measure first, cropped to the Next: Baseline 1 card: its minutes per part, Part A first, Start Baseline 1">
+      <div class="frame"><img src="assets/shots/lab-home.png" alt="The Lab home screen on a phone: the next visit and its length"><div class="ph"><b>lab-home</b><span>phone 390 × 844 · light</span><span>Lab home with the visit plan</span></div></div>
+      <figcaption><b>Lab home:</b> the next visit and how long it takes.</figcaption>
+    </figure>
+    <div class="text">
+  <ul>
+    <li>Baseline 1, then Baseline 2 two to seven days later, both before training. The first retest raises scores the most, so Baseline 2 is your reference. Then a Quick check before session 11, a Post-test 1–3 days after session 20, and a Follow-up 8–12 weeks later.</li>
+    <li>On a training day, do the Lab before your first session. Visits on another kind of device or at a different time of day are flagged. A visit you skip shows as “Left out”.</li>
+    <li><b>Time:</b> a Standard visit takes about 52 minutes in two sittings: Part A first, then Part B within 3 days. The whole schedule takes about 3.7 hours over about 4 months. That is why Minimum and Quick check exist.</li>
+    <li>If you chose <b>Start training now</b>, you can still use the Lab: your visits are labelled “no baseline” and show scores without a change verdict.</li>
+  </ul>
+    </div>
+  </div>
+
+  <h3>Reading your results</h3>
+  <ul>
+    <li>Your scores appear as dots, one per visit, always with the retest caveat. There are no IQ scores and no percentiles, and one person’s change cannot show what caused it.</li>
+    <li>A <b>change verdict</b> appears only once a test is <b>calibrated</b>: at least 50 people with both baselines have pooled their data, and the community has published a calibration file (made with <code>tools/analysis</code>) that you import or that ships in a release. Until then each test says “not yet calibrated” and shows the typical retest gain from the research.</li>
+    <li><b>Above</b> or <b>below the noise band</b> means a larger change than measurement noise alone explains; <b>inside</b> means noise could explain it. The usual gain from retaking the tests is not subtracted, so it is not proof that training caused the change. When the calibration file holds the retest gain of at least 30 people who did not train, a second line says how the verdict looks after subtracting it.</li>
+    <li>At the Post-test, Long-Horizon asks you to export: you need that file for the Follow-up if your browser clears its storage.</li>
+  </ul>
+
+  <div class="box deep">
+    <span class="label">In depth · the noise band</span>
+    <p>Verdicts use the reliable change index (Jacobson &amp; Truax 1991). For a test with retest reliability <i>r</i> and spread SD, a change counts as real at the 95 % level only if it exceeds 1.96 × SD × √(2(1 − <i>r</i>)): about 1.52 SD when <i>r</i> = .70, 1.24 SD at .80 and 0.88 SD at .90. Expected effects on far tests are between 0 and about 0.2 SD, well inside such a band, which is why one person’s result says little about cause and why studies pool many people.</p>
+  </div>
+
+  <figure class="shot" data-shot="lab-results" data-size="wide" data-viewport="1366x768" data-crop="the results column, Near group" data-state="Lab results on a computer, light theme, after Baseline 1, Baseline 2 and the Quick check, cropped to the results column: the Near group's dot plots (n-back probe, relation probe) with 'Not yet calibrated' notes">
+      <div class="frame"><img src="assets/shots/lab-results.png" alt="Lab results on a computer: dot plots of each test across visits, grouped near, mid and far"><div class="ph"><b>lab-results</b><span>desktop 1366 × 768 · light</span><span>Lab results: dots per visit, near / mid / far</span></div></div>
+      <figcaption><b>Lab results on a computer.</b> Each dot is one visit; verdicts appear only for calibrated tests.</figcaption>
+    </figure>
+
+  <h3>Study mode: a real experiment</h3>
+  <p>Study mode compares two programmes over the same schedule. In most templates one of them is adaptive <b>visual search</b>: is there a T among the rotated Ls? (<b>Present</b> <kbd>J</kbd>, <b>Absent</b> <kbd>F</kbd>). It has no memory load, and its number of symbols (8 to 64) and time allowed adapt by the same rule as training. Its blocks have 40 searches, so both programmes take about the same time per session: about 18 minutes at the default length, about 30 minutes in the Cao template and about 7 minutes in the Wang template. Both get the same screens, debriefs, goals and badges, and the screens describe every programme in the same neutral words, so participants are not told which one is the comparison. Control participants get the full programme afterwards, once they choose Leave the study.</p>
+  <table class="compact">
+    <thead><tr><th style="width:34%">Template (as the app names it)</th><th>Programmes compared</th></tr></thead>
+    <tbody>
+      <tr><td><b>Long-Horizon study (20 sessions)</b></td><td>Long-Horizon training (Varied, n-back and relations, Span off) and visual search; optionally a Lab-only group</td></tr>
+      <tr><td><b>Cao et al. 2026 replication (6 sessions)</b></td><td>Executive and traditional n-back on Cao’s procedure, optionally with a visual-search group: the untrained comparison Cao’s study lacked</td></tr>
+      <tr><td><b>Wang et al. 2025 replication (30 days)</b></td><td>Equal Steps on Wang’s procedure and visual search, an active control of about the same session length (Wang’s quiz control was neither adaptive nor matched)</td></tr>
+    </tbody>
+  </table>
+  <ul>
+    <li><b>Who:</b> adults only, after a plain-language consent, under a random anonymous ID. Questions cover your expectations (at Baseline 2 and the Post-test) and a guess at your programme (at the Post-test).</li>
+    <li><b>Assignment:</b> on your own, you draw your programme after Baseline 2. The app first shows only a <b>commitment code</b>: post it in the Chimera Discord (or note it), confirm “I have posted or noted the code”, and only then does it show your programme. Your export later shows that the programme you followed is the one behind the code you posted; it cannot show that a draw was not repeated before the code was posted. In a coordinated study, the coordinator issues a code only after seeing a finished Baseline 2.</li>
+    <li><b>Leaving:</b> <b>Leave the study</b> keeps your data, records the date you left in your study file, and training then follows your own training style.</li>
+    <li><b>Headroom:</b> in 60-day simulations, 8 % of the default template’s visual-search learners reached the top step (11 % in the Cao template, 3 % in the Wang template); one more step may be needed after pilots.</li>
+  </ul>
+  <div class="box honest">
+    <span class="label">Honest note · the codes are not secret</span>
+    <p>Long-Horizon is open source, so anyone who reads the code can decode a coordinator’s code. Keeping the programme hidden depends on everyone playing fair, not on cryptography; the README and the consent text say so too.</p>
+  </div>
+
+  <h3>Running a community study</h3>
+  <ol class="steps">
+    <li><b>Plan and preregister</b> before anyone enrols: template, hypotheses, the smallest effect that would matter and a stopping rule. Run <code>analyze.py --plan</code> (below) and post its output publicly, for example in the Chimera Discord, before the first draw.</li>
+    <li><b>Recruit adults.</b> Each turns on Study mode, reads the consent and does both baselines; programmes are assigned only then.</li>
+    <li><b>Train</b> on the template’s schedule, then the Post-test (with an export) and the Follow-up 8–12 weeks later.</li>
+    <li><b>Pool and analyse.</b> Participants send their exports if they choose to. Check the commitment codes, run the analysis and report every outcome, with the dropouts in each group.</li>
+  </ol>
+  <p><b>How many people?</b> Per group, roughly: 20–30 to test near transfer; 70–100 to show that far transfer is smaller than d = 0.3; and 150–200 to detect an effect of d = 0.2.</p>
+
+  <div class="box deep">
+    <span class="label">In depth · the analysis tools (tools/analysis)</span>
+    <p>Python scripts that run outside the app on pooled exports (pandas, statsmodels and scipy), tested on synthetic data. <code>analyze.py</code> analyses <b>one study template at a time</b> (they are never pooled), with a fixed outcome plan per template: the near, mid and far composites are primary for the Long-Horizon study, complex span (with task switching second) for the Cao replication, and matrices for the Wang replication. It runs an ANCOVA of the Post-test on the baseline for each comparison, on everyone with both visits (available-case, not a full intention-to-treat analysis), with Holm correction across each family of outcomes, equivalence tests (TOST, by default against ±0.3 SD; Lakens et al. 2018) and Bayes factors (BF<sub>10</sub> above 3 favours an effect, below 1/3 favours none). Every report ends with a fingerprint of the code and options. <code>calibrate.py</code> makes the calibration file (at least 50 people); <code>synth.py</code> makes fake exports with known effects, to rehearse.</p>
+<pre><code>pip install -r tools/analysis/requirements.txt
+python tools/analysis/analyze.py --plan --template default
+python tools/analysis/synth.py --out demo/ --n-per-arm 60 --effect near=0.6,mid=0.2,far=0
+python tools/analysis/analyze.py demo/ --template default --json results.json</code></pre>
+    <p>Do not split people into “responders” by their training gain, correlate baseline with gain, read within-group change as a training effect, or report single outcomes without the correction.</p>
+  </div>
+</section>
+
+<!-- ================================================================ 9 PROGRESS -->
+<section class="chapter" id="progress">
+  <header class="ch-head">
+    <p class="ch-num"><b>9</b> · Progress</p>
+    <h2>Progress, badges and goals</h2>
+    <svg class="ruler" viewBox="0 0 1640 26" preserveAspectRatio="none" aria-hidden="true"><path class="maj" d="M0.6 0V26M100.6 0V26M200.6 0V26M300.6 0V26M400.6 0V26M500.6 0V26M600.6 0V26M700.6 0V26M800.6 0V26M900.6 0V26M1000.6 0V26M1100.6 0V26M1200.6 0V26M1300.6 0V26M1400.6 0V26M1500.6 0V26M1600.6 0V26"/><path class="min" d="M20.5 13V26M40.5 13V26M60.5 13V26M80.5 13V26M120.5 13V26M140.5 13V26M160.5 13V26M180.5 13V26M220.5 13V26M240.5 13V26M260.5 13V26M280.5 13V26M320.5 13V26M340.5 13V26M360.5 13V26M380.5 13V26M420.5 13V26M440.5 13V26M460.5 13V26M480.5 13V26M520.5 13V26M540.5 13V26M560.5 13V26M580.5 13V26M620.5 13V26M640.5 13V26M660.5 13V26M680.5 13V26M720.5 13V26M740.5 13V26M760.5 13V26M780.5 13V26M820.5 13V26M840.5 13V26M860.5 13V26M880.5 13V26M920.5 13V26M940.5 13V26M960.5 13V26M980.5 13V26M1020.5 13V26M1040.5 13V26M1060.5 13V26M1080.5 13V26M1120.5 13V26M1140.5 13V26M1160.5 13V26M1180.5 13V26M1220.5 13V26M1240.5 13V26M1260.5 13V26M1280.5 13V26M1320.5 13V26M1340.5 13V26M1360.5 13V26M1380.5 13V26M1420.5 13V26M1440.5 13V26M1460.5 13V26M1480.5 13V26M1520.5 13V26M1540.5 13V26M1560.5 13V26M1580.5 13V26M1620.5 13V26"/></svg>
+    <p class="lead">During a block you see only the task. Everything else waits for the breaks: a short debrief after each block, and your levels, goals and graphs between sessions.</p>
+  </header>
+
+  <h3>After each block</h3>
+  <div class="with-shot">
+    <figure class="shot" data-shot="debrief" data-size="phone" data-viewport="390x844" data-state="The debrief after block 7 of 14 (Switch n-back at 2-back, cue changes on half the items, fast pace) on a phone, light theme: You caught 5 of 6 matches and pressed twice when there was none; block score 85 %; level stays; Details closed; Next block in 15 s">
+      <div class="frame"><img src="assets/shots/debrief.png" alt="The debrief after a block: a plain-language sentence, the score and the next level"><div class="ph"><b>debrief</b><span>phone 390 × 844 · light</span><span>The debrief after a block</span></div></div>
+      <figcaption><b>The debrief</b>: plain words first, details on request.</figcaption>
+    </figure>
+    <div class="text">
+      <p>A short debrief, in plain words first: “You caught 5 of 6 matches and pressed twice when there was none.” Then the block score, your level for the next block, and where you are in the session (“Block 7 of 14”). Sensitivity (d′), response bias, lures (items that almost fit the rule) and reaction times sit behind <b>Details</b>. The debrief moves on by itself, or you can skip it. A one-second celebration appears only for a level-up or a personal best; when <i>n</i> or a Span list grows, it says so: “Your horizon grew: now 4-back.”</p>
+      <h4>Bars, levels and counters</h4>
+      <ul>
+        <li>The <b>session bar</b>, the <b>weekly ring</b> toward your target, and programme milestones every 5 sessions.</li>
+        <li>For each version, the “<b>Last three blocks</b>” meter shows your last three scores against the step-down and step-up lines, so you can see a level change coming.</li>
+        <li><b>Levels</b> are the real ladder of each version (Relation Grid: “step 4 of 9”), with an estimate in the same unit, personal bests and lifetime counters that never reset.</li>
+        <li><b>Graphs</b> (level and score per session, learning curves, minutes per week, Lab results) and a <b>history</b> of every session, block and trial, with CSV and JSON export.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Twelve badges</h3>
+  <div class="with-shot">
+    <figure class="shot" data-shot="progress" data-size="phone" data-viewport="390x844" data-state="Progress on a phone, light theme, after 13 sessions: Levels, the Plain n-back row opened with its level, skill estimate, best and the Last three blocks meter against the step lines">
+      <div class="frame"><img src="assets/shots/progress.png" alt="The Progress screen on a phone: levels per version with their meters"><div class="ph"><b>progress</b><span>phone 390 × 844 · light</span><span>Progress: levels and meters</span></div></div>
+      <figcaption><b>Progress</b>: levels, meters and personal bests.</figcaption>
+    </figure>
+    <div class="text">
+      <p>Badges mark learning milestones. They stay hidden until you earn them, they are never for speed, volume or streaks, and nothing ever requires them.</p>
+      <table class="compact">
+        <tbody>
+          <tr><td><b>Rules learned</b></td><td>You passed the n-back check in the tutorial.</td></tr>
+          <tr><td><b>3-back reached</b> · <b>5-back reached</b></td><td>An n-back version reached 3-back, then 5-back.</td></tr>
+          <tr><td><b>All three executive versions</b></td><td>You have played Transform, Arithmetic and Switch.</td></tr>
+          <tr><td><b>Relations: Different tier</b></td><td>The Relation Grid’s Different tier is open.</td></tr>
+          <tr><td><b>Relations: five-cell patterns</b></td><td>The Five the same tier is open.</td></tr>
+          <tr><td><b>Explorer</b></td><td>You have tried every version and every kind of item.</td></tr>
+          <tr><td><b>Both baselines done</b></td><td>Baseline 1 and Baseline 2 are finished.</td></tr>
+          <tr><td><b>Post-test done</b> · <b>Follow-up done</b></td><td>Your Post-test, then your Follow-up, is finished.</td></tr>
+          <tr><td><b>Comeback</b></td><td>You came back after 14 or more days away.</td></tr>
+          <tr><td><b>Reflective</b></td><td>You wrote a strategy note.</td></tr>
+        </tbody>
+      </table>
+      <h4>Weekly goals, not daily streaks</h4>
+      <p>You set a weekly target of 3 to 5 sessions. Rest days are built in; a session you could not do can be made up later in the week (one a day); a planned break pauses the goal; every Monday is a fresh start; and the app never shows loss messages.</p>
+    </div>
+  </div>
+
+  <p><b>Focus mode</b> (in Settings) hides all of this, and the Lab never shows it. <b>Share to Discord</b> copies a short summary (sessions, minutes and your newest badge, and your levels only if you tick “include my levels”) that ends with discord.gg/chmr.</p>
+
+  <div class="box deep">
+    <span class="label">In depth · why so quiet?</span>
+    <p>Gamified cognitive training felt more motivating (g = .72), but its cognitive outcomes were not shown to improve (g = .27, not significant; Vermeir et al. 2020). In a preliminary study with 107 children, a score visible during play reduced n-back gains (Katz et al. 2014). Badges plus leaderboards lowered motivation (Hanus &amp; Fox 2015), and broken streaks cut engagement (Silverman &amp; Barasch 2023).</p>
+  </div>
+</section>
+
+<!-- ================================================================ 10 RESEARCH -->
+<section class="chapter" id="research">
+  <header class="ch-head">
+    <p class="ch-num"><b>10</b> · Background</p>
+    <h2>The research, plainly</h2>
+    <svg class="ruler" viewBox="0 0 1640 26" preserveAspectRatio="none" aria-hidden="true"><path class="maj" d="M0.6 0V26M100.6 0V26M200.6 0V26M300.6 0V26M400.6 0V26M500.6 0V26M600.6 0V26M700.6 0V26M800.6 0V26M900.6 0V26M1000.6 0V26M1100.6 0V26M1200.6 0V26M1300.6 0V26M1400.6 0V26M1500.6 0V26M1600.6 0V26"/><path class="min" d="M20.5 13V26M40.5 13V26M60.5 13V26M80.5 13V26M120.5 13V26M140.5 13V26M160.5 13V26M180.5 13V26M220.5 13V26M240.5 13V26M260.5 13V26M280.5 13V26M320.5 13V26M340.5 13V26M360.5 13V26M380.5 13V26M420.5 13V26M440.5 13V26M460.5 13V26M480.5 13V26M520.5 13V26M540.5 13V26M560.5 13V26M580.5 13V26M620.5 13V26M640.5 13V26M660.5 13V26M680.5 13V26M720.5 13V26M740.5 13V26M760.5 13V26M780.5 13V26M820.5 13V26M840.5 13V26M860.5 13V26M880.5 13V26M920.5 13V26M940.5 13V26M960.5 13V26M980.5 13V26M1020.5 13V26M1040.5 13V26M1060.5 13V26M1080.5 13V26M1120.5 13V26M1140.5 13V26M1160.5 13V26M1180.5 13V26M1220.5 13V26M1240.5 13V26M1260.5 13V26M1280.5 13V26M1320.5 13V26M1340.5 13V26M1360.5 13V26M1380.5 13V26M1420.5 13V26M1440.5 13V26M1460.5 13V26M1480.5 13V26M1520.5 13V26M1540.5 13V26M1560.5 13V26M1580.5 13V26M1620.5 13V26"/></svg>
+    <p class="lead">Long-Horizon claims only what the evidence supports. Here is that evidence in plain words, including the disappointing parts.</p>
+  </header>
+
+  <h3>Executive n-back (Cao et al. 2026)</h3>
+  <p>Classic n-back with one added operation: the items are the seven days of the week, and you press when the day shown is the day <i>after</i> the day <i>n</i> back. The idea comes from an imaging study that added a manipulation step to n-back with days of the week (León-Domínguez et al. 2015). Thirty students trained for six 30-minute sessions, 15 on the executive version and 15 on the traditional one.</p>
+  <ul>
+    <li>Operation span, a complex span task, improved in the executive group only (group × time p = .005, ηp² = .25).</li>
+    <li>Switch costs fell in both groups; the executive group’s advantage was marginal (p = .069).</li>
+    <li>Stroop and Raven’s matrices improved in both groups with no difference between them; the authors suggest practice from the pre-test.</li>
+    <li>At the 3-month follow-up (27 people) no score had declined significantly. The groups no longer differed on the operation span score or on switch cost; letters recalled still favoured the executive group (p = .028, with post-test and follow-up pooled).</li>
+    <li>The executive group trained about one level lower (about 6.7-back against 8.4-back by session 6).</li>
+  </ul>
+  <div class="box honest">
+    <span class="label">Limits</span>
+    <p>Small groups; no untrained control group, so retest effects cannot be separated from training; not preregistered; many comparisons without correction; and the task was not fully described, so Long-Horizon fills the gaps with stated choices. In short: a small, interesting, unreplicated result. For context, a 2026 meta-analysis of 55 studies (3,492 people) found that updating training transferred slightly to span tasks (g = 0.18) but span training did not transfer to updating (0.05); the difference between the two was marginal (p = .073; Fu et al. 2026).</p>
+  </div>
+
+  <h3>Relational integration (Wang et al. 2025, and others)</h3>
+  <p><b>As a measure, it is strong.</b> A relational-integration factor correlated about .9 with reasoning, as a latent correlation (Oberauer et al. 2008, 131 people), and relation-monitoring tasks explained reasoning beyond complex span, short-term memory and other measures (Chuderski 2014, 243 people; Bateman et al. 2019, 100 people).</p>
+  <p><b>As training, the record is weak.</b> Trained groups improved on the trained task: in one programme the relational task gained about d = .8 yet did not transfer to another relational task (von Bastian, Langer et al. 2013, 123 people). Transfer to other content was weak (Hilbert et al. 2017, 216 people), no study found transfer to reasoning (Lange &amp; Süß 2015; Hilbert et al. 2017; Himi et al. 2023, 171 people), and binding training gave Bayesian evidence <i>for</i> no transfer (De Simoni &amp; von Bastian 2018).</p>
+  <p><b>Wang, Sun and Xiao 2025</b> trained 29 students on a number-stream task (Long-Horizon calls it Equal Steps), 5 blocks a day for 30 days, while 28 did a general-knowledge quiz. On the only reasoning test, a set of matrices close to ceiling, both groups improved equally, with no group × time effect on accuracy or speed. The reasoning claim in the paper’s title rests on EEG changes alone, and the quiz control was neither adaptive nor matched for dose.</p>
+  <p>The only head-to-head trial of the facets of working memory with an active control (von Bastian &amp; Oberauer 2013; abstract only) found transfer to reasoning after storage-and-processing training and after switching training, but not after relational training. That is why Long-Horizon also trains switching (the Switch version) and offers Span.</p>
+
+  <h3>How transfer behaves</h3>
+  <table class="compact">
+    <thead><tr><th style="width:26%">Kind of gain</th><th style="width:34%">Typical effect</th><th>Sources</th></tr></thead>
+    <tbody>
+      <tr><td><b>The trained task</b></td><td>large (g ≈ .9, in older adults)</td><td>Sala et al. 2019</td></tr>
+      <tr><td><b>Near:</b> the same paradigm, new material</td><td>medium (untrained n-back g = .62)</td><td>Soveri et al. 2017; Gathercole et al. 2019</td></tr>
+      <tr><td><b>Mid:</b> other working memory tasks</td><td>small (g ≈ .2–.3); several well-run studies found none</td><td>Melby-Lervåg et al. 2016; Rodas et al. 2024; De Simoni &amp; von Bastian 2018</td></tr>
+      <tr><td><b>Far:</b> reasoning, IQ, school</td><td>about zero with active controls (g .01–.06)</td><td>Au et al. 2015 (.06 against active controls, .44 against passive ones); Melby-Lervåg et al. 2016; Sala &amp; Gobet 2020; Watrin et al. 2022 (two years of training)</td></tr>
+    </tbody>
+  </table>
+  <ul>
+    <li><b>Shared structure drives near and mid transfer:</b> d = .54–.90 when the trained and tested tasks share a paradigm, against about .11–.35 when they do not (Gathercole et al. 2019). N-back and complex-span training did not transfer to each other (Holmes et al. 2019).</li>
+    <li>Within people, matrix-reasoning gains went with gains on an untrained n-back (Pahor, Seitz &amp; Jaeggi 2022). That is a correlation; their preregistered, actively controlled trial with 189 people showed no overall reasoning effect.</li>
+    <li><b>Expectations matter:</b> a placebo framing alone raised a matrices score by d ≈ .5 within an hour (Foroughi et al. 2016). That is why Study mode uses an active control and asks about expectations.</li>
+    <li><b>How Long-Horizon practises:</b> training at your edge beat a fixed level (Lilienthal et al. 2013), though self-chosen difficulty did as well in one study where no group transferred (von Bastian &amp; Eschen 2016); about 85 % success is a theoretical sweet spot (Wilson et al. 2019), untested here; 20 sessions spread over 20 days helped children’s reasoning more than the same 20 packed together (Wang, Zhou &amp; Shah 2014; one-tailed p = .038); a taught strategy speeds early gains, but its edge fades (Laine et al. 2018; Fellman et al. 2020); mastery learning raised aligned test scores by about half a standard deviation (Kulik et al. 1990); desirable difficulties help only if the learner can cope (Bjork &amp; Bjork 2020).</li>
+  </ul>
+
+  <div class="box">
+    <span class="label">What Long-Horizon claims</span>
+    <p><b>You will get much better at the trained tasks, often better at very similar untrained ones, and maybe slightly better at other memory tasks. Most controlled studies find no effect on IQ or reasoning, and one person’s Lab change cannot show cause.</b> Variety, spacing, training at your edge and training several processes are choices that theory suggests <i>may</i> help near and mid transfer; none is shown to. Long-Horizon is not a medical device and does not diagnose or treat anything.</p>
+  </div>
+  <div class="box honest">
+    <span class="label">Limits of this chapter</span>
+    <p>The two studies behind the headline tasks are small and have not been repeated. Long-Horizon’s thresholds and step sizes are design choices, checked with simulated learners, until community pilots refine them. The Lab’s tests are new: their reliability, and how equal their forms are, will be known only once the community has data. Some sources could be read only as abstracts.</p>
+  </div>
+</section>
+
+<!-- ================================================================ 11 PRIVACY -->
+<section class="chapter" id="privacy">
+  <header class="ch-head">
+    <p class="ch-num"><b>11</b> · Background</p>
+    <h2>Your data and privacy</h2>
+    <svg class="ruler" viewBox="0 0 1640 26" preserveAspectRatio="none" aria-hidden="true"><path class="maj" d="M0.6 0V26M100.6 0V26M200.6 0V26M300.6 0V26M400.6 0V26M500.6 0V26M600.6 0V26M700.6 0V26M800.6 0V26M900.6 0V26M1000.6 0V26M1100.6 0V26M1200.6 0V26M1300.6 0V26M1400.6 0V26M1500.6 0V26M1600.6 0V26"/><path class="min" d="M20.5 13V26M40.5 13V26M60.5 13V26M80.5 13V26M120.5 13V26M140.5 13V26M160.5 13V26M180.5 13V26M220.5 13V26M240.5 13V26M260.5 13V26M280.5 13V26M320.5 13V26M340.5 13V26M360.5 13V26M380.5 13V26M420.5 13V26M440.5 13V26M460.5 13V26M480.5 13V26M520.5 13V26M540.5 13V26M560.5 13V26M580.5 13V26M620.5 13V26M640.5 13V26M660.5 13V26M680.5 13V26M720.5 13V26M740.5 13V26M760.5 13V26M780.5 13V26M820.5 13V26M840.5 13V26M860.5 13V26M880.5 13V26M920.5 13V26M940.5 13V26M960.5 13V26M980.5 13V26M1020.5 13V26M1040.5 13V26M1060.5 13V26M1080.5 13V26M1120.5 13V26M1140.5 13V26M1160.5 13V26M1180.5 13V26M1220.5 13V26M1240.5 13V26M1260.5 13V26M1280.5 13V26M1320.5 13V26M1340.5 13V26M1360.5 13V26M1380.5 13V26M1420.5 13V26M1440.5 13V26M1460.5 13V26M1480.5 13V26M1520.5 13V26M1540.5 13V26M1560.5 13V26M1580.5 13V26M1620.5 13V26"/></svg>
+    <p class="lead">Long-Horizon has no account, no analytics and no ads, and it sends nothing anywhere. Everything stays in your browser’s storage on this device. Your data leave the device only when you export them yourself.</p>
+  </header>
+  <ul>
+    <li><b>What is stored:</b> your settings, levels and learner model; a summary of every session and block; Lab and Study records (never trimmed); and trial-by-trial logs of your newest 60 sessions. About a year and a half of daily training fits; when saved data grow large, blocks older than 90 days are compacted (levels, history and charts stay the same).</li>
+    <li><b>Saving notices:</b> when saved data get large, Long-Horizon asks you to export a backup. If it cannot save, Today and Settings say “Not saved on this device” and why: storage is blocked (some previews and private windows), storage is full, or a newer version of Long-Horizon saved data in another tab (reload to use it). Progress then lasts only while the page is open, and Export still works.</li>
+    <li><b>Export</b> (in Progress, and at the Lab’s Post-test) gives you a file <i>and</i> a box of text you can copy, in case downloads are blocked. <b>Import</b> merges a file into what is already there. Two tabs at once are safe: their records merge.</li>
+    <li><b>Clearing your browser’s data deletes Long-Horizon’s data,</b> and Safari may delete it after 7 days of browser use without a visit. Long-Horizon reminds you to back up after milestones and shows your last backup date on Progress.</li>
+    <li><b>Study exports</b> are yours to send or not. They carry a random anonymous ID, your Lab and training records, your Study answers, and the kind of device you used and when; never your name or e-mail address.</li>
+    <li><b>Reset</b> (Settings → Data) deletes everything on this device. The Discord link opens Discord’s website, where Discord’s own privacy terms apply.</li>
+  </ul>
+</section>
+
+<!-- ================================================================ 12 FAQ -->
+<section class="chapter" id="faq">
+  <header class="ch-head">
+    <p class="ch-num"><b>12</b> · Help</p>
+    <h2>FAQ and troubleshooting</h2>
+    <svg class="ruler" viewBox="0 0 1640 26" preserveAspectRatio="none" aria-hidden="true"><path class="maj" d="M0.6 0V26M100.6 0V26M200.6 0V26M300.6 0V26M400.6 0V26M500.6 0V26M600.6 0V26M700.6 0V26M800.6 0V26M900.6 0V26M1000.6 0V26M1100.6 0V26M1200.6 0V26M1300.6 0V26M1400.6 0V26M1500.6 0V26M1600.6 0V26"/><path class="min" d="M20.5 13V26M40.5 13V26M60.5 13V26M80.5 13V26M120.5 13V26M140.5 13V26M160.5 13V26M180.5 13V26M220.5 13V26M240.5 13V26M260.5 13V26M280.5 13V26M320.5 13V26M340.5 13V26M360.5 13V26M380.5 13V26M420.5 13V26M440.5 13V26M460.5 13V26M480.5 13V26M520.5 13V26M540.5 13V26M560.5 13V26M580.5 13V26M620.5 13V26M640.5 13V26M660.5 13V26M680.5 13V26M720.5 13V26M740.5 13V26M760.5 13V26M780.5 13V26M820.5 13V26M840.5 13V26M860.5 13V26M880.5 13V26M920.5 13V26M940.5 13V26M960.5 13V26M980.5 13V26M1020.5 13V26M1040.5 13V26M1060.5 13V26M1080.5 13V26M1120.5 13V26M1140.5 13V26M1160.5 13V26M1180.5 13V26M1220.5 13V26M1240.5 13V26M1260.5 13V26M1280.5 13V26M1320.5 13V26M1340.5 13V26M1360.5 13V26M1380.5 13V26M1420.5 13V26M1440.5 13V26M1460.5 13V26M1480.5 13V26M1520.5 13V26M1540.5 13V26M1560.5 13V26M1580.5 13V26M1620.5 13V26"/></svg>
+  </header>
+  <dl class="faq">
+    <dt>I hear no sound, or it seems late.</dt>
+    <dd>Browsers allow sound only after a tap or key press, so start the block with a tap or Space. Check the volume and the iPhone’s silent switch, and run the sound check in Settings; if sound stops during a block, the block pauses and asks for a tap. Bluetooth headphones add delay: in Settings → Sound, use Sound timing → Measure my delay. Tones are the default. Spoken letters (C, H, K, L, Q, R, S, T, synthesised with the free Flite voice) are an experimental option: nobody has yet checked them by ear, so tell us in the Discord if one sounds unclear.</dd>
+    <dt>Some items were “not counted”.</dt>
+    <dd>Long-Horizon times every item in frames of your screen. An item hit by a stall is not counted and never counts against you; the debrief lists such items under Details as “Items not counted”. A block with more than 20 % of its items not counted moves nothing. Close other tabs and apps, plug in a laptop, turn off battery saver (some phones drop to 30 frames per second), and use a regular browser rather than an in-app one.</dd>
+    <dt>My level went down. Does speed matter?</dt>
+    <dd>Levels move both ways to keep you at your edge, where you get about 80 % right (Varied style), and they move on accuracy only. Speed is compared only within one person on one device.</dd>
+    <dt>I was interrupted in the middle of a block.</dt>
+    <dd>Press <kbd>Esc</kbd> or <kbd>P</kbd>; switching to another app pauses by itself. On Resume, n-back, Equal Steps and Relation Stream blocks restart with a fresh sequence after a 3-2-1 lead-in; Relation Grid and visual-search blocks continue with the next item, and Span with the next list. A paused block moves nothing. <b>End session</b> in the pause menu asks before it ends anything.</dd>
+    <dt>My phone’s screen turns off during blocks.</dt>
+    <dd>Long-Horizon asks the phone to stay awake during blocks, but battery saver can refuse. On iPhones with iOS before 18.4 this did not work for apps added to the Home Screen: raise the auto-lock time, or use Safari itself.</dd>
+    <dt>It runs inside a preview or chat window, but Export and links do nothing.</dt>
+    <dd>Sandboxed previews block downloads, new tabs and sometimes storage. Use Export’s copy box, type <b>discord.gg/chmr</b> into your browser, and open the downloaded <code>long-horizon.html</code> or <code>index.html</code> for everything to work.</dd>
+    <dt>Which browsers work?</dt>
+    <dd>Long-Horizon was tested in Chromium, the engine of Chrome and Edge. Firefox and Safari rely on careful feature detection; please report anything odd in the Discord.</dd>
+    <dt>Can I skip the tutorial?</dt>
+    <dd>Yes: pass its check straight away. Lessons can be replayed from Learn; How to play in the pause menu repeats the rule and keys. Learn also has untimed practice and a glossary.</dd>
+    <dt>Can I use Long-Horizon with a screen reader?</dt>
+    <dd>Menus, results and settings have screen-reader labels; the timed tasks are not accessible with a screen reader. Long-Horizon also offers keyboard-only use, large text, a left-handed layout, reduced motion and two themes, and never uses colour as the only cue.</dd>
+    <dt>Will this raise my IQ?</dt>
+    <dd>Long-Horizon does not claim that, because controlled studies do not support it (chapter 10). It will make you better at its tasks, and the Lab lets you measure what else changes.</dd>
+  </dl>
+</section>
+
+<!-- ================================================================ 13 REFERENCES -->
+<section class="chapter" id="refs">
+  <header class="ch-head">
+    <p class="ch-num"><b>13</b> · Background</p>
+    <h2>References</h2>
+    <svg class="ruler" viewBox="0 0 1640 26" preserveAspectRatio="none" aria-hidden="true"><path class="maj" d="M0.6 0V26M100.6 0V26M200.6 0V26M300.6 0V26M400.6 0V26M500.6 0V26M600.6 0V26M700.6 0V26M800.6 0V26M900.6 0V26M1000.6 0V26M1100.6 0V26M1200.6 0V26M1300.6 0V26M1400.6 0V26M1500.6 0V26M1600.6 0V26"/><path class="min" d="M20.5 13V26M40.5 13V26M60.5 13V26M80.5 13V26M120.5 13V26M140.5 13V26M160.5 13V26M180.5 13V26M220.5 13V26M240.5 13V26M260.5 13V26M280.5 13V26M320.5 13V26M340.5 13V26M360.5 13V26M380.5 13V26M420.5 13V26M440.5 13V26M460.5 13V26M480.5 13V26M520.5 13V26M540.5 13V26M560.5 13V26M580.5 13V26M620.5 13V26M640.5 13V26M660.5 13V26M680.5 13V26M720.5 13V26M740.5 13V26M760.5 13V26M780.5 13V26M820.5 13V26M840.5 13V26M860.5 13V26M880.5 13V26M920.5 13V26M940.5 13V26M960.5 13V26M980.5 13V26M1020.5 13V26M1040.5 13V26M1060.5 13V26M1080.5 13V26M1120.5 13V26M1140.5 13V26M1160.5 13V26M1180.5 13V26M1220.5 13V26M1240.5 13V26M1260.5 13V26M1280.5 13V26M1320.5 13V26M1340.5 13V26M1360.5 13V26M1380.5 13V26M1420.5 13V26M1440.5 13V26M1460.5 13V26M1480.5 13V26M1520.5 13V26M1540.5 13V26M1560.5 13V26M1580.5 13V26M1620.5 13V26"/></svg>
+  </header>
+  <p class="refs-note">Every work the app and this guide cite. Titles are shortened to their main clause; each DOI or arXiv number links to the publication.</p>
+  <ol class="refs">
+    <li>Alfieri, L., Brooks, P. J., Aldrich, N. J., &amp; Tenenbaum, H. R. (2011). Does discovery-based instruction enhance learning? <i>Journal of Educational Psychology, 103</i>(1), 1–18. <a href="https://doi.org/10.1037/a0021017">doi:10.1037/a0021017</a></li>
+    <li>Andersen, E., et al. (2012). The impact of tutorials on games of varying complexity. <i>Proceedings of CHI 2012</i>, 59–68. <a href="https://doi.org/10.1145/2207676.2207687">doi:10.1145/2207676.2207687</a></li>
+    <li>Au, J., et al. (2015). Improving fluid intelligence with training on working memory: a meta-analysis. <i>Psychonomic Bulletin &amp; Review, 22</i>(2), 366–377. <a href="https://doi.org/10.3758/s13423-014-0699-x">doi:10.3758/s13423-014-0699-x</a></li>
+    <li>Bateman, J. E., Thompson, K. M., &amp; Birney, D. P. (2019). Validating the relation-monitoring task as a measure of relational integration. <i>Memory &amp; Cognition, 47</i>(8), 1457–1468. <a href="https://doi.org/10.3758/s13421-019-00952-2">doi:10.3758/s13421-019-00952-2</a></li>
+    <li>Bjork, R. A., &amp; Bjork, E. L. (2020). Desirable difficulties in theory and practice. <i>Journal of Applied Research in Memory and Cognition, 9</i>(4), 475–479.</li>
+    <li>Brunmair, M., &amp; Richter, T. (2019). Similarity matters. <i>Psychological Bulletin, 145</i>(11), 1029–1052. <a href="https://doi.org/10.1037/bul0000209">doi:10.1037/bul0000209</a></li>
+    <li>Cao, D.-Y., Zhang, T.-N., Zhang, Y., Zhang, E., &amp; Zhang, G.-L. (2026). Broad and sustained transfer effects of executive n-back working memory training. <i>Psychonomic Bulletin &amp; Review, 33</i>, Article 36. <a href="https://doi.org/10.3758/s13423-025-02773-8">doi:10.3758/s13423-025-02773-8</a></li>
+    <li>Chuderski, A. (2014). The relational integration task explains fluid reasoning above and beyond other working memory tasks. <i>Memory &amp; Cognition, 42</i>, 448–463. <a href="https://doi.org/10.3758/s13421-013-0366-x">doi:10.3758/s13421-013-0366-x</a></li>
+    <li>Chuderski, A. (2016). Time pressure prevents relational learning. <i>Learning and Individual Differences, 49</i>, 361–365. <a href="https://doi.org/10.1016/j.lindif.2016.07.006">doi:10.1016/j.lindif.2016.07.006</a></li>
+    <li>De Simoni, C., &amp; von Bastian, C. C. (2018). Working memory updating and binding training: Bayesian evidence supporting the absence of transfer. <i>Journal of Experimental Psychology: General, 147</i>(6), 829–858. <a href="https://doi.org/10.1037/xge0000453">doi:10.1037/xge0000453</a></li>
+    <li>Fellman, D., et al. (2020). The role of strategy use in working memory training outcomes. <i>Journal of Memory and Language, 110</i>, 104064. <a href="https://doi.org/10.1016/j.jml.2019.104064">doi:10.1016/j.jml.2019.104064</a></li>
+    <li>Foroughi, C. K., et al. (2016). Placebo effects in cognitive training. <i>PNAS, 113</i>(27), 7470–7474. <a href="https://doi.org/10.1073/pnas.1601243113">doi:10.1073/pnas.1601243113</a></li>
+    <li>Fu, J.-Y., Zhou, Y.-X., Yuan, M.-L., &amp; Cai, Y. (2026). The asymmetry of working memory training transfer. <i>Psychonomic Bulletin &amp; Review</i>. <a href="https://doi.org/10.3758/s13423-026-02994-5">doi:10.3758/s13423-026-02994-5</a></li>
+    <li>García-Pérez, M. A. (1998). Forced-choice staircases with fixed step sizes. <i>Vision Research, 38</i>(12), 1861–1881. <a href="https://doi.org/10.1016/S0042-6989(97)00340-4">doi:10.1016/S0042-6989(97)00340-4</a></li>
+    <li>Gathercole, S. E., Dunning, D. L., Holmes, J., &amp; Norris, D. (2019). Working memory training involves learning new skills. <i>Journal of Memory and Language, 105</i>, 19–42. <a href="https://doi.org/10.1016/j.jml.2018.10.003">doi:10.1016/j.jml.2018.10.003</a></li>
+    <li>Hanus, M. D., &amp; Fox, J. (2015). Assessing the effects of gamification in the classroom. <i>Computers &amp; Education, 80</i>, 152–161. <a href="https://doi.org/10.1016/j.compedu.2014.08.019">doi:10.1016/j.compedu.2014.08.019</a></li>
+    <li>Hedge, C., Powell, G., &amp; Sumner, P. (2018). The reliability paradox. <i>Behavior Research Methods, 50</i>(3), 1166–1186. <a href="https://doi.org/10.3758/s13428-017-0935-1">doi:10.3758/s13428-017-0935-1</a></li>
+    <li>Hilbert, S., et al. (2017). Working memory tasks train working memory but not reasoning. <i>Intelligence, 61</i>, 102–114. <a href="https://doi.org/10.1016/j.intell.2017.01.010">doi:10.1016/j.intell.2017.01.010</a></li>
+    <li>Himi, S. A., et al. (2023). Limits of near transfer. <i>Journal of Experimental Psychology: General, 152</i>(5), 1305–1333. <a href="https://doi.org/10.1037/xge0001328">doi:10.1037/xge0001328</a></li>
+    <li>Holmes, J., Gathercole, S. E., &amp; Dunning, D. L. (2009). Adaptive training leads to sustained enhancement of poor working memory in children. <i>Developmental Science, 12</i>(4), F9–F15. <a href="https://doi.org/10.1111/j.1467-7687.2009.00848.x">doi:10.1111/j.1467-7687.2009.00848.x</a></li>
+    <li>Holmes, J., Woolgar, F., Hampshire, A., &amp; Gathercole, S. E. (2019). Are working memory training effects paradigm-specific? <i>Frontiers in Psychology, 10</i>, 1103. <a href="https://doi.org/10.3389/fpsyg.2019.01103">doi:10.3389/fpsyg.2019.01103</a></li>
+    <li>Jacobson, N. S., &amp; Truax, P. (1991). Clinical significance. <i>Journal of Consulting and Clinical Psychology, 59</i>(1), 12–19. <a href="https://doi.org/10.1037/0022-006X.59.1.12">doi:10.1037/0022-006X.59.1.12</a></li>
+    <li>Jaeggi, S. M., Buschkuehl, M., Jonides, J., &amp; Perrig, W. J. (2008). Improving fluid intelligence with training on working memory. <i>PNAS, 105</i>(19), 6829–6833. <a href="https://doi.org/10.1073/pnas.0801268105">doi:10.1073/pnas.0801268105</a></li>
+    <li>Jastrzębski, J., Ociepka, M., &amp; Chuderski, A. (2023). Graph Mapping: a novel and simple test to validly assess fluid reasoning. <i>Behavior Research Methods, 55</i>(1), 448–460. <a href="https://doi.org/10.3758/s13428-022-01846-z">doi:10.3758/s13428-022-01846-z</a></li>
+    <li>Katz, B., et al. (2014). Differential effect of motivational features on training improvements in school-based cognitive training. <i>Frontiers in Human Neuroscience, 8</i>, 242. <a href="https://doi.org/10.3389/fnhum.2014.00242">doi:10.3389/fnhum.2014.00242</a></li>
+    <li>Kulik, C.-L. C., Kulik, J. A., &amp; Bangert-Drowns, R. L. (1990). Effectiveness of mastery learning programs. <i>Review of Educational Research, 60</i>(2), 265–299.</li>
+    <li>Kwa, T., West, B., et al. (2025). Measuring AI ability to complete long tasks. <i>arXiv</i>:2503.14499. <a href="https://arxiv.org/abs/2503.14499">arxiv.org/abs/2503.14499</a></li>
+    <li>Laine, M., Fellman, D., Waris, O., &amp; Nyman, T. J. (2018). The early effects of external and internal strategies on working memory updating training. <i>Scientific Reports, 8</i>, 4045. <a href="https://doi.org/10.1038/s41598-018-22396-5">doi:10.1038/s41598-018-22396-5</a></li>
+    <li>Lakens, D., Scheel, A. M., &amp; Isager, P. M. (2018). Equivalence testing for psychological research. <i>Advances in Methods and Practices in Psychological Science, 1</i>(2), 259–269. <a href="https://doi.org/10.1177/2515245918770963">doi:10.1177/2515245918770963</a></li>
+    <li>Lange, S., &amp; Süß, H.-M. (2015). Experimental evaluation of near- and far-transfer effects of an adaptive multicomponent working memory training. <i>Applied Cognitive Psychology, 29</i>(4), 502–514. <a href="https://doi.org/10.1002/acp.3126">doi:10.1002/acp.3126</a></li>
+    <li>León-Domínguez, U., Martín-Rodríguez, J. F., &amp; León-Carrión, J. (2015). Executive n-back tasks for the neuropsychological assessment of working memory. <i>Behavioural Brain Research, 292</i>, 167–173. <a href="https://doi.org/10.1016/j.bbr.2015.06.002">doi:10.1016/j.bbr.2015.06.002</a></li>
+    <li>Li, Y., &amp; Birney, D. P. (2026). Relational integration and attentional control are crucial to fluid intelligence together but not alone. <i>Journal of Intelligence, 14</i>(1), 8. <a href="https://doi.org/10.3390/jintelligence14010008">doi:10.3390/jintelligence14010008</a></li>
+    <li>Lilienthal, L., et al. (2013). Dual n-back training increases the capacity of the focus of attention. <i>Psychonomic Bulletin &amp; Review, 20</i>(1), 135–141. <a href="https://doi.org/10.3758/s13423-012-0335-6">doi:10.3758/s13423-012-0335-6</a></li>
+    <li>Matzen, L. E., et al. (2010). Recreating Raven’s. <i>Behavior Research Methods, 42</i>(2), 525–541. <a href="https://doi.org/10.3758/BRM.42.2.525">doi:10.3758/BRM.42.2.525</a></li>
+    <li>Melby-Lervåg, M., Redick, T. S., &amp; Hulme, C. (2016). Working memory training does not improve performance on measures of intelligence or other measures of “far transfer”. <i>Perspectives on Psychological Science, 11</i>(4), 512–534. <a href="https://doi.org/10.1177/1745691616635612">doi:10.1177/1745691616635612</a></li>
+    <li>Oberauer, K., Süß, H.-M., Wilhelm, O., &amp; Wittmann, W. W. (2008). Which working memory functions predict intelligence? <i>Intelligence, 36</i>(6), 641–652. <a href="https://doi.org/10.1016/j.intell.2008.01.007">doi:10.1016/j.intell.2008.01.007</a></li>
+    <li>Pahor, A., Seitz, A. R., &amp; Jaeggi, S. M. (2022). Near transfer to an unrelated N-back task mediates the effect of N-back working memory training on matrix reasoning. <i>Nature Human Behaviour, 6</i>, 1243–1256. <a href="https://doi.org/10.1038/s41562-022-01384-w">doi:10.1038/s41562-022-01384-w</a></li>
+    <li>Porter, J. M., &amp; Magill, R. A. (2010). Systematically increasing contextual interference is beneficial for learning sport skills. <i>Journal of Sports Sciences, 28</i>(12), 1277–1285. <a href="https://doi.org/10.1080/02640414.2010.502946">doi:10.1080/02640414.2010.502946</a></li>
+    <li>Raviv, L., Lupyan, G., &amp; Green, C. S. (2022). How variability shapes learning and generalization. <i>Trends in Cognitive Sciences, 26</i>(6), 462–483. <a href="https://doi.org/10.1016/j.tics.2022.03.007">doi:10.1016/j.tics.2022.03.007</a></li>
+    <li>Renkl, A., &amp; Atkinson, R. K. (2003). Structuring the transition from example study to problem solving in cognitive skill acquisition. <i>Educational Psychologist, 38</i>(1), 15–22. <a href="https://doi.org/10.1207/S15326985EP3801_3">doi:10.1207/S15326985EP3801_3</a></li>
+    <li>Rodas, J. A., Asimakopoulou, A. A., &amp; Greene, C. M. (2024). Can we enhance working memory? <i>Psychonomic Bulletin &amp; Review, 31</i>(5), 1891–1914. <a href="https://doi.org/10.3758/s13423-024-02466-8">doi:10.3758/s13423-024-02466-8</a></li>
+    <li>Sala, G., et al. (2019). Working memory training does not enhance older adults’ cognitive skills. <i>Intelligence, 77</i>, 101386. <a href="https://doi.org/10.1016/j.intell.2019.101386">doi:10.1016/j.intell.2019.101386</a></li>
+    <li>Sala, G., &amp; Gobet, F. (2020). Working memory training in typically developing children: a multilevel meta-analysis. <i>Psychonomic Bulletin &amp; Review, 27</i>(3), 423–434. <a href="https://doi.org/10.3758/s13423-019-01681-y">doi:10.3758/s13423-019-01681-y</a></li>
+    <li>Scharfen, J., Jansen, K., &amp; Holling, H. (2018). Retest effects in working memory capacity tests. <i>Psychonomic Bulletin &amp; Review, 25</i>(6), 2175–2199. <a href="https://doi.org/10.3758/s13423-018-1461-6">doi:10.3758/s13423-018-1461-6</a></li>
+    <li>Silverman, J., &amp; Barasch, A. (2023). On or off track. <i>Journal of Consumer Research, 49</i>(6), 1095–1117. <a href="https://doi.org/10.1093/jcr/ucac029">doi:10.1093/jcr/ucac029</a></li>
+    <li>Soveri, A., et al. (2017). Working memory training revisited: a multi-level meta-analysis of n-back training studies. <i>Psychonomic Bulletin &amp; Review, 24</i>(4), 1077–1096. <a href="https://doi.org/10.3758/s13423-016-1217-0">doi:10.3758/s13423-016-1217-0</a></li>
+    <li>Unsworth, N., Heitz, R. P., Schrock, J. C., &amp; Engle, R. W. (2005). An automated version of the operation span task. <i>Behavior Research Methods, 37</i>(3), 498–505. <a href="https://doi.org/10.3758/BF03192720">doi:10.3758/BF03192720</a></li>
+    <li>Vermeir, J. F., et al. (2020). The effects of gamification on computerized cognitive training. <i>JMIR Serious Games, 8</i>(3), e18644. <a href="https://doi.org/10.2196/18644">doi:10.2196/18644</a></li>
+    <li>von Bastian, C. C., &amp; Eschen, A. (2016). Does working memory training have to be adaptive? <i>Psychological Research, 80</i>, 181–194. <a href="https://doi.org/10.1007/s00426-015-0655-z">doi:10.1007/s00426-015-0655-z</a></li>
+    <li>von Bastian, C. C., Langer, N., Jäncke, L., &amp; Oberauer, K. (2013). Effects of working memory training in young and old adults. <i>Memory &amp; Cognition, 41</i>(4), 611–624. <a href="https://doi.org/10.3758/s13421-012-0280-7">doi:10.3758/s13421-012-0280-7</a></li>
+    <li>von Bastian, C. C., &amp; Oberauer, K. (2013). Distinct transfer effects of training different facets of working memory capacity. <i>Journal of Memory and Language, 69</i>(1), 36–58. <a href="https://doi.org/10.1016/j.jml.2013.02.002">doi:10.1016/j.jml.2013.02.002</a></li>
+    <li>Wang, Z., Sun, T., &amp; Xiao, F. (2025). Relational integration training modulated the frontoparietal network for fluid intelligence: an EEG microstates study. <i>Brain Topography, 38</i>(2), 24. <a href="https://doi.org/10.1007/s10548-024-01099-3">doi:10.1007/s10548-024-01099-3</a></li>
+    <li>Wang, Z., Zhou, R., &amp; Shah, P. (2014). Spaced cognitive training promotes training transfer. <i>Frontiers in Human Neuroscience, 8</i>, 217. <a href="https://doi.org/10.3389/fnhum.2014.00217">doi:10.3389/fnhum.2014.00217</a></li>
+    <li>Watrin, L., Hülür, G., &amp; Wilhelm, O. (2022). Training working memory for two years: no evidence of transfer to intelligence. <i>Journal of Experimental Psychology: Learning, Memory, and Cognition, 48</i>(5), 717–733. <a href="https://doi.org/10.1037/xlm0001135">doi:10.1037/xlm0001135</a></li>
+    <li>Wilson, R. C., Shenhav, A., Straccia, M., &amp; Cohen, J. D. (2019). The Eighty Five Percent Rule for optimal learning. <i>Nature Communications, 10</i>, 4646. <a href="https://doi.org/10.1038/s41467-019-12552-4">doi:10.1038/s41467-019-12552-4</a></li>
+  </ol>
+</section>
+
+<!-- ================================================================ 14 CREDITS -->
+<section class="chapter" id="credits">
+  <header class="ch-head">
+    <p class="ch-num"><b>14</b> · Background</p>
+    <h2>Credits, licences and Chimera</h2>
+    <svg class="ruler" viewBox="0 0 1640 26" preserveAspectRatio="none" aria-hidden="true"><path class="maj" d="M0.6 0V26M100.6 0V26M200.6 0V26M300.6 0V26M400.6 0V26M500.6 0V26M600.6 0V26M700.6 0V26M800.6 0V26M900.6 0V26M1000.6 0V26M1100.6 0V26M1200.6 0V26M1300.6 0V26M1400.6 0V26M1500.6 0V26M1600.6 0V26"/><path class="min" d="M20.5 13V26M40.5 13V26M60.5 13V26M80.5 13V26M120.5 13V26M140.5 13V26M160.5 13V26M180.5 13V26M220.5 13V26M240.5 13V26M260.5 13V26M280.5 13V26M320.5 13V26M340.5 13V26M360.5 13V26M380.5 13V26M420.5 13V26M440.5 13V26M460.5 13V26M480.5 13V26M520.5 13V26M540.5 13V26M560.5 13V26M580.5 13V26M620.5 13V26M640.5 13V26M660.5 13V26M680.5 13V26M720.5 13V26M740.5 13V26M760.5 13V26M780.5 13V26M820.5 13V26M840.5 13V26M860.5 13V26M880.5 13V26M920.5 13V26M940.5 13V26M960.5 13V26M980.5 13V26M1020.5 13V26M1040.5 13V26M1060.5 13V26M1080.5 13V26M1120.5 13V26M1140.5 13V26M1160.5 13V26M1180.5 13V26M1220.5 13V26M1240.5 13V26M1260.5 13V26M1280.5 13V26M1320.5 13V26M1340.5 13V26M1360.5 13V26M1380.5 13V26M1420.5 13V26M1440.5 13V26M1460.5 13V26M1480.5 13V26M1520.5 13V26M1540.5 13V26M1560.5 13V26M1580.5 13V26M1620.5 13V26"/></svg>
+  </header>
+  <p>Long-Horizon was built by the Chimera community on Discord, for anyone who wants to train working memory honestly and to find out, together, what that training does. The Discord is where people share progress, suggest features, report problems and coordinate community studies.</p>
+  <ul>
+    <li><b>Research.</b> The tasks re-implement published procedures (chapter 13) in our own words and code; no code, test items or figures were copied.</li>
+    <li><b>Spoken letters:</b> Flite (Carnegie Mellon University), voice cmu_us_slt from the CMU ARCTIC recordings; terms in <code>NOTICE</code>. <b>Colours:</b> the Okabe–Ito palette. <b>Fonts in this PDF:</b> Lora, Inter and Liberation Mono (SIL Open Font License).</li>
+    <li><b>Licences.</b> Code: MIT (<code>LICENSE</code>). Texts and this guide: <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> (<code>LICENSE-CONTENT</code>); credit them as <i>Long-Horizon texts and guide © 2026 Long-Horizon contributors (Chimera community), CC BY-SA 4.0</i>. Third-party material: <code>NOTICE</code>. Nothing comes from Brain Workshop (GPL), non-commercial or AGPL tools, or copyrighted tests such as Raven’s matrices or ICAR.</li>
+  </ul>
+  <p>Source code, issues and new versions: <a data-repo href="https://github.com/mighty-iq/Long-Horizon">github.com/mighty-iq/Long-Horizon</a> (developers: start with its <code>README.md</code>).</p>
+
+  <div class="closing">
+    <div class="inner">
+      <h3>Come and say hello</h3>
+      <p>Long-Horizon was built by the Chimera community on Discord, check it out! Share progress, suggest features and join community studies.</p>
+      <a class="join" href="https://discord.gg/chmr">discord.gg/chmr</a>
+    </div>
+    <img src="assets/horizon.svg" alt="">
+  </div>
+</section>
+
+<script>
+/* Fills repository links from <meta name="long-horizon-repo"> when it is set (tools/build-pdf.py may also set it). */
+(function () {
+  var meta = document.querySelector('meta[name="long-horizon-repo"]');
+  var url = meta && meta.getAttribute('content') ? meta.getAttribute('content').trim() : '';
+  if (!/^https?:\/\//.test(url)) return;
+  var shown = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  Array.prototype.forEach.call(document.querySelectorAll('a[data-repo]'), function (a) {
+    a.setAttribute('href', url);
+    a.textContent = shown;
+  });
+})();
+</script>
+</body>
+</html>
