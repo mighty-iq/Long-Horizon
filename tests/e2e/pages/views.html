@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Long-Horizon views harness</title>
+<link rel="stylesheet" href="../../../css/app.css">
+<link rel="stylesheet" href="../../../css/views.css">
+<style>
+  html, body { height: 100%; }
+  body { margin: 0; overflow: hidden; }
+  #root { height: 100vh; height: 100svh; overflow: auto; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="../../../js/core/rng.js"></script>
+<script src="../../../js/core/stats.js"></script>
+<script src="../../../js/core/util.js"></script>
+<script src="../../../js/core/schema.js"></script>
+<script src="../../../js/content/sets.js"></script>
+<script src="../../../js/tasks/relations/steps.js"></script>
+<script src="../../../js/tasks/relations/grid.js"></script>
+<script src="../../../js/tasks/relations/stream.js"></script>
+<script src="../../../js/tasks/relations/score.js"></script>
+<script src="../../../js/tasks/span/gen.js"></script>
+<script src="../../../js/tasks/span/score.js"></script>
+<script src="../../../js/tasks/vsearch/gen.js"></script>
+<script src="../../../js/tasks/vsearch/score.js"></script>
+<script src="../../../js/core/dom.js"></script>
+<script src="../../../js/core/input.js"></script>
+<script src="../../../js/core/timing.js"></script>
+<script src="../../../js/core/audio.js"></script>
+<script src="../../../js/ui/components.js"></script>
+<script src="../../../js/tasks/relations/view.js"></script>
+<script src="../../../js/tasks/span/view.js"></script>
+<script src="../../../js/tasks/vsearch/view.js"></script>
+<script>
+/* Test harness only (not shipped in the app). It plays the player's part: generate a spec, create the view, run it
+   through HF.timing (or view.run for Span) and score the log with the task's scorer. The Python side drives real
+   key presses and taps. URL: ?theme=light|dark&hand=left. Long animation frames are collected for the stall check. */
+(function () {
+  'use strict';
+  var q = {};
+  location.search.replace(/^\?/, '').split('&').forEach(function (kv) { if (kv) { var p = kv.split('='); q[p[0]] = decodeURIComponent(p[1] || ''); } });
+  if (q.theme) document.documentElement.setAttribute('data-theme', q.theme);
+  if (q.hand) document.documentElement.setAttribute('data-hand', q.hand);
+
+  var loaf = [], loafSupported = false;
+  try {
+    if (PerformanceObserver.supportedEntryTypes && PerformanceObserver.supportedEntryTypes.indexOf('long-animation-frame') >= 0) {
+      new PerformanceObserver(function (list) {
+        list.getEntries().forEach(function (e) {
+          loaf.push({ start: e.startTime, duration: e.duration, blocking: e.blockingDuration,
+            scripts: (e.scripts || []).map(function (s) { return { src: s.sourceURL, fn: s.sourceFunctionName, invoker: s.invoker, dur: s.duration }; }) });
+        });
+      }).observe({ type: 'long-animation-frame', buffered: true });
+      loafSupported = true;
+    }
+  } catch (e) { loafSupported = false; }
+
+  var rootEl = document.getElementById('root');
+  var VH = { on: -1, shownCount: 0, lastShown: -1, view: null, spec: null, progress: [], pending: null, fb: [] };
+
+  function kindOf(o) { return o.kind || (o.gen && o.gen.trackId === 'vs.search' ? 'vsearch' : (o.gen && /^span\./.test(o.gen.trackId) ? 'span' : 'relations')); }
+  function genFor(kind, g) {
+    if (kind === 'span') return HF.tasks.span.gen(g);
+    if (kind === 'vsearch') return HF.tasks.vsearch.gen(g);
+    return HF.tasks.relations.gen(g);
+  }
+  function scoreFor(kind, spec, log) {
+    if (kind === 'span') return HF.tasks.span.score(spec, log);
+    if (kind === 'vsearch') return HF.tasks.vsearch.score(spec, log);
+    return HF.tasks.relations.score(spec, log);
+  }
+
+  VH.mount = function (o) {
+    o = o || {};
+    if (VH.view && VH.view.destroy) VH.view.destroy();
+    var kind = kindOf(o);
+    var spec = genFor(kind, o.gen || {});
+    if (o.patch) for (var k in o.patch) spec[k] = o.patch[k];
+    var view = HF.views[kind].create(rootEl, spec, o.ctx || {});
+    VH.kind = kind; VH.spec = spec; VH.view = view; VH.on = -1; VH.shownCount = 0; VH.lastShown = -1; VH.progress = []; VH.fb = [];
+    VH.firstVisible = null; VH.pauseInfo = null;
+    if (typeof view.show === 'function' && !view.run) {
+      var show = view.show, hide = view.hide, prep = view.prepare;
+      view.show = function (t) { show.call(view, t); VH.on = t.i; VH.lastShown = t.i; VH.shownCount++; };
+      view.hide = function (t) { hide.call(view, t); VH.on = -1; };
+      view.prepare = function (t) {
+        prep.call(view, t);
+        if (t.i === 0 && VH.firstVisible === null) {
+          var g = view.el.querySelector('.hf-rg');
+          if (g && !g.classList.contains('is-off')) VH.firstVisible = performance.now();
+        }
+      };
+    }
+    return VH.summary();
+  };
+
+  /* Relation Stream without a runner: per transition, which cells swapped layers and what the visible layers read. */
+  VH.swapAudit = function (k) {
+    var v = VH.view, s = VH.spec, out = [];
+    function layerIdx() {
+      return Array.prototype.map.call(v.el.querySelectorAll('.hf-rg__cell'), function (cell) {
+        return cell.querySelectorAll('.hf-rg__in')[0].classList.contains('is-hid') ? 1 : 0;
+      });
+    }
+    function texts() {
+      return Array.prototype.map.call(v.el.querySelectorAll('.hf-rg__cell'), function (cell) {
+        var l = cell.querySelector('.hf-rg__in:not(.is-hid)');
+        return l ? l.textContent : null;
+      });
+    }
+    for (var j = 0; j <= k && j < s.trials.length; j++) {
+      var before = layerIdx();
+      if (j > 0) v.hide(s.trials[j - 1]);
+      v.prepare(s.trials[j]);
+      var afterPrep = layerIdx();
+      v.show(s.trials[j]);
+      var after = layerIdx(), swapped = [], early = [];
+      for (var c = 0; c < after.length; c++) { if (before[c] !== after[c]) swapped.push(c); if (before[c] !== afterPrep[c]) early.push(c); }
+      out.push({ i: j, swapped: swapped, swappedInPrepare: early, texts: texts(), off: v.el.querySelector('.hf-rg').classList.contains('is-off') });
+    }
+    return out;
+  };
+
+  VH.summary = function () {
+    var s = VH.spec, out = { kind: VH.kind, trackId: s.trackId, specKind: s.kind, n: s.trials.length, runOpts: VH.view.runOpts || null };
+    if (s.kind === 'stream') {
+      out.targets = s.trials.filter(function (t) { return t.scorable && t.target.main; }).map(function (t) { return t.i; });
+      out.lures = s.trials.filter(function (t) { return t.scorable && !t.target.main && t.lure.main; }).map(function (t) { return t.i; });
+      out.nonTargets = s.trials.filter(function (t) { return t.scorable && !t.target.main; }).map(function (t) { return t.i; });
+      out.onMs = s.onMs; out.soaMs = s.soaMs; out.leadIn = s.leadIn;
+      out.initialMs = s.meta && s.meta.initialMs || null;
+    } else if (s.kind === 'discrete') {
+      out.answers = s.trials.map(function (t) { return t.answer; });
+      out.windowMs = s.windowMs; out.itiMs = s.itiMs;
+    } else if (s.kind === 'span') {
+      out.lists = s.trials.map(function (t) { return { i: t.i, expected: HF.tasks.span.expected(t), truth: t.pairs.map(function (p) { return !!p.proc.correct; }), eqs: t.pairs.map(function (p) { return p.proc.text; }) }; });
+      out.memMs = s.memMs; out.procLimitMs = s.procLimitMs;
+    }
+    out.rule = s.meta && s.meta.rule ? s.meta.rule.text || null : null;
+    out.variant = s.meta && s.meta.variant || null;
+    return out;
+  };
+
+  function outcomeFor(resp, trial) {
+    if (VH.spec.kind === 'stream') return trial.target && trial.target.main ? 'good' : 'bad';
+    return resp.response === trial.answer ? 'good' : 'bad';
+  }
+
+  VH.run = function (o) {
+    o = o || {};
+    var v = VH.view, spec = VH.spec, kind = VH.kind, p;
+    var t0 = performance.now();
+    if (typeof v.run === 'function') {
+      var c2 = { timing: HF.timing, input: HF.input, onProgress: function (x) { VH.progress.push(x); } };
+      if (o.delegatePause) c2.onPause = function (info) { VH.pauseInfo = info; };
+      p = v.run(c2);
+    } else {
+      var opts = {};
+      var ro = v.runOpts || {};
+      for (var k in ro) opts[k] = ro[k];
+      if (o.opts) for (var k2 in o.opts) opts[k2] = o.opts[k2];
+      opts.onResponse = function (resp, trial) {
+        if (o.feedback) VH.fb.push({ i: trial.i, t: performance.now(), ok: v.feedback(outcomeFor(resp, trial), resp.key || resp.response) });
+      };
+      p = spec.kind === 'stream' ? HF.timing.runStream(spec, v, opts) : HF.timing.runDiscrete(spec, v, opts);
+    }
+    VH.finished = false;
+    VH.pending = p.then(function (log) {
+      VH.finished = true;
+      var during = loaf.filter(function (e) { return e.start + e.duration > t0 - 50; });
+      var score = null, err = null;
+      try { score = scoreFor(kind, spec, log); } catch (e) { err = String(e && e.stack || e); }
+      return { log: log, score: score, scoreError: err, loaf: during, loafSupported: loafSupported, busyAfter: HF.timing.busy,
+        busyAttrAfter: document.documentElement.hasAttribute('data-busy'), progress: VH.progress, fb: VH.fb };
+    });
+    return true;
+  };
+  VH.result = function () { return VH.pending; };
+
+  /* Static display of trial i (screenshots): prepare + show without a runner. */
+  VH.still = function (i, o) {
+    o = o || {};
+    var v = VH.view, s = VH.spec;
+    if (s.kind === 'stream') { for (var j = 0; j <= i; j++) { v.prepare(s.trials[j]); v.show(s.trials[j]); } }
+    else { v.prepare(s.trials[i]); v.show(s.trials[i]); }
+    if (o.mark) v.mark(o.mark);
+    return true;
+  };
+
+  /* Span: what is on screen now (read from the DOM; the harness knows the spec). */
+  VH.spanNow = function () {
+    var el = VH.view.el;
+    var judge = el.querySelector('.hf-sp__judge'), mem = el.querySelector('.hf-sp__mem'), recall = el.querySelector('.hf-sp__recall');
+    var msg = el.querySelector('.hf-sp__msg');
+    var timedHidden = el.querySelector('.hf-sp__timed').hidden;
+    if (!recall.hidden) {
+      var lists = VH.progress.filter(function (x) { return x.phase === 'list'; });
+      var done = lists.length ? lists[lists.length - 1].done : 0;
+      var tr = VH.spec.trials[done];
+      return { t: 'recall', list: done, expected: HF.tasks.span.expected(tr), keypad: tr.recallKeypad };
+    }
+    if (!timedHidden && !judge.classList.contains('is-hid')) {
+      var text = el.querySelector('.hf-sp__eq').textContent;
+      for (var a = 0; a < VH.spec.trials.length; a++) {
+        var ps = VH.spec.trials[a].pairs;
+        for (var b = 0; b < ps.length; b++) if (ps[b].proc.text === text) return { t: 'judge', list: a, k: b, correct: !!ps[b].proc.correct, text: text };
+      }
+      return { t: 'judge', text: text };
+    }
+    if (!timedHidden && !mem.classList.contains('is-hid')) return { t: 'mem', text: el.querySelector('.hf-sp__memv').textContent };
+    if (!msg.hidden) return { t: 'msg', title: el.querySelector('.hf-sp__mtitle').textContent, paused: !el.querySelector('.hf-sp__macts').hidden };
+    return { t: 'blank' };
+  };
+
+  VH.fakeHidden = function () {
+    Object.defineProperty(document, 'visibilityState', { configurable: true, get: function () { return 'hidden'; } });
+    document.dispatchEvent(new Event('visibilitychange'));
+  };
+  VH.fakeVisible = function () { delete document.visibilityState; document.dispatchEvent(new Event('visibilitychange')); };
+  VH.stall = function (ms) { var t = performance.now(); while (performance.now() - t < ms) { /* busy wait */ } return true; };
+
+  /* Layout facts for the "fits without scrolling" checks. */
+  VH.layout = function () {
+    var r = function (sel) { var e = VH.view.el.querySelector(sel); if (!e) return null; var b = e.getBoundingClientRect(); return { x: b.left, y: b.top, w: b.width, h: b.height, bottom: b.bottom, right: b.right }; };
+    return { vw: innerWidth, vh: innerHeight, scrollH: rootEl.scrollHeight, clientH: rootEl.clientHeight, docScrollW: document.documentElement.scrollWidth,
+      grid: r('.hf-rg'), field: r('.hf-vs'), pads: r('.hf-v__pads'), head: r('.hf-v__head'), key: r('.hf-v__key'), num: r('.hf-es__num'),
+      recall: r('.hf-sp__recall'), view: r('.hf-v') };
+  };
+  window.VH = VH;
+})();
+</script>
+</body>
+</html>

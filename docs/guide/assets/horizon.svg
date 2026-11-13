@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 150" preserveAspectRatio="xMidYMax slice" role="img" aria-label="A horizon with a half sun on it and three steps leading out to it">
+<!-- Long-Horizon guide art (cover and back page), drawn for the guide; CC BY-SA 4.0 with the guide. The app's mark in
+     wide form: a horizon line counted in steps (the ticks), a half sun resting on it, and rungs that lengthen toward
+     the viewer, leading out to the horizon. Colours: the guide's deep palette and the Okabe-Ito orange. -->
+<path fill="#E69F00" opacity="0.16" d="M196 80a44 44 0 0 1 88 0z"/>
+<path fill="#E69F00" d="M210 80a30 30 0 0 1 60 0z"/>
+<path fill="none" stroke="#A9BDC6" stroke-width="1.5" d="M0 80H480"/>
+<path fill="none" stroke="#566B76" stroke-width="1" d="M8 80.75v3M24 80.75v3M40 80.75v3M56 80.75v3M88 80.75v3M104 80.75v3M120 80.75v3M136 80.75v3M168 80.75v3M184 80.75v3M200 80.75v3M216 80.75v3M264 80.75v3M280 80.75v3M296 80.75v3M312 80.75v3M344 80.75v3M360 80.75v3M376 80.75v3M392 80.75v3M424 80.75v3M440 80.75v3M456 80.75v3M472 80.75v3"/>
+<path fill="none" stroke="#A9BDC6" stroke-width="1.2" d="M72 80.75v6M152 80.75v6M328 80.75v6M408 80.75v6"/>
+<path fill="none" stroke="#2E4D60" stroke-width="1.4" stroke-linecap="round" d="M232 81L96 150M248 81L384 150"/>
+<path fill="none" stroke="#A9BDC6" stroke-width="1.8" stroke-linecap="round" d="M208.7 92H271.3"/>
+<path fill="none" stroke="#C9D6DC" stroke-width="2.4" stroke-linecap="round" d="M177.6 108H302.4"/>
+<path fill="none" stroke="#E4EDF0" stroke-width="3" stroke-linecap="round" d="M134.9 130H345.1"/>
+</svg>

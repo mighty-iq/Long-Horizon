@@ -1,0 +1,329 @@
+/* Long-Horizon — task area, block player, n-back views and the session screen (css/tasks.css). MIT licence. Owner: P1a.
+   Tokens and components come from css/app.css. Rules for this file:
+   - nothing here animates: the stimuli only toggle classes (visibility, colour); html[data-busy] (app.css) also freezes
+     every other transition while a block runs;
+   - colour is never the only cue (lit cells are filled, cue words carry an icon and a word, feedback rings differ in
+     style: solid for good, dashed for not-good);
+   - per-response feedback is never red: "not good" is a neutral dashed ring;
+   - the task layer fills the viewport while a block runs, so the pads sit below the stimulus without scrolling,
+     from 360 px phones to desktops. */
+
+/* 1. The task layer (HF.player) ============================================================= */
+
+.hf-play {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: max(0.5rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+  background: var(--hf-bg);
+  color: var(--hf-ink);
+  overflow-y: auto;            /* safety net only: every view fits from 360×640 up (tests check it) */
+  overscroll-behavior: none;
+}
+.hf-play:focus { outline: none; }
+.hf-play__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 40rem;
+  min-height: var(--hf-hit);
+}
+.hf-play__label { min-width: 0; }
+.hf-play__label .hf-chip { max-width: 100%; }
+.hf-play__pause.hf-btn { flex: none; color: var(--hf-ink-2); }
+.hf-play__view {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 40rem;
+  min-height: 0;
+}
+.hf-play__count {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  transform: translate(-50%, -50%);
+  display: none;
+  min-width: 6rem;
+  padding: 0.5rem 1.25rem;
+  border: 2px solid var(--hf-line-strong);
+  border-radius: var(--hf-r-pill);
+  background: var(--hf-raised);
+  color: var(--hf-ink);
+  font: 700 var(--hf-t-4xl)/1 var(--hf-font);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  pointer-events: none;
+}
+.hf-play__count.is-on { display: block; }
+.hf-play__audio { position: absolute; inset: auto 0 40% 0; padding: 0 0.25rem; z-index: 2; }
+.hf-countdown { font: 700 var(--hf-t-4xl)/1 var(--hf-font); text-align: center; color: var(--hf-ink); }
+
+/* The rule card and the debrief sit in the normal page flow */
+.hf-play-rule,
+.hf-play-debrief { display: flex; flex-direction: column; gap: var(--hf-sp-4); }
+.hf-play__strategy { margin-top: 0.25rem; }
+/* Start / Continue always stay in view (a long rule card with a strategy card, details opened): the action row sticks
+   to the bottom of the viewport — above the tab bar on phones and tablets */
+.hf-play-rule .hf-rule__foot,
+.hf-play-debrief .hf-debrief__actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  margin: 0 -1.25rem -1.25rem;
+  padding: 0.75rem 1.25rem 1rem;
+  border-top: 1px solid var(--hf-line);
+  border-radius: 0 0 var(--hf-r-lg) var(--hf-r-lg);
+  background: var(--hf-surface);
+}
+.hf-play-debrief .hf-debrief__actions .hf-actions { margin-left: auto; }
+@media (max-width: 56.24em) {
+  .hf-play-rule .hf-rule__foot,
+  .hf-play-debrief .hf-debrief__actions { bottom: calc(var(--hf-tabbar-h) + env(safe-area-inset-bottom, 0px)); }
+}
+@media (min-width: 56.25em) {
+  .hf-play-rule .hf-rule__foot { margin: 0 -1.75rem -1.75rem; padding: 0.875rem 1.75rem 1.25rem; }
+}
+/* Short screens (≤ 700 px tall): the sticky Start row covered the example and the keys (at 360 × 640 the keys began
+   65 px below it), so there it ends the card and is reached by scrolling past them (Phase 4, UX-20) */
+@media (max-height: 43.75em) {
+  .hf-play-rule .hf-rule__foot { position: static; }
+}
+.hf-play-rule .hf-rule__foot > .hf-actions { margin-left: auto; }
+/* Narrow screens: the primary action spans the row (thumb reach); secondary actions keep their size */
+@media (max-width: 37.4375em) {
+  .hf-play-rule .hf-rule__foot > .hf-actions,
+  .hf-play-debrief .hf-debrief__actions > .hf-actions { flex: 1 1 auto; }
+  .hf-play-rule .hf-rule__foot .hf-btn--primary,
+  .hf-play-debrief .hf-debrief__actions .hf-btn--primary { flex: 1 1 auto; }
+  .hf-play-debrief .hf-debrief__auto:empty { display: none; }
+}
+/* Touch screens: the keyboard hint line under the rule card is noise */
+@media (hover: none) and (pointer: coarse) {
+  .hf-play-rule .hf-rule__hint { display: none; }
+}
+.hf-play__details { display: flex; flex-direction: column; gap: var(--hf-sp-4); }
+.hf-play__why-title { font-size: var(--hf-t-sm); font-weight: 600; color: var(--hf-ink-2); margin: 0 0 0.25rem; }
+.hf-play__why-list { margin: 0; padding-left: 1.25rem; font-size: var(--hf-t-sm); color: var(--hf-ink-2); line-height: 1.45; }
+.hf-play__why-list li + li { margin-top: 0.25rem; }
+.hf-play__help { display: flex; flex-direction: column; gap: var(--hf-sp-3); }
+.hf-play__help-rule { font-weight: 600; color: var(--hf-ink); }
+
+/* Per-response feedback on pads: good = solid green ring, not good = neutral dashed ring (never red) */
+.hf-task .hf-pad[data-fb="good"] { outline: 4px solid var(--hf-good); outline-offset: 3px; }
+.hf-task .hf-pad[data-fb="bad"] { outline: 4px dashed var(--hf-ink-3); outline-offset: 3px; }
+
+/* 2. N-back view ============================================================================ */
+
+.hf-nb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  --hf-nb-size: min(100%, 50dvh, 28rem);
+}
+.hf-nb[data-tape] { --hf-nb-size: min(100%, 36dvh, 24rem); }
+.hf-nb__stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  padding: 0.5rem 0;
+}
+
+/* Switch cue: WHAT / WHERE, word + icon, stacked in one place */
+.hf-nb__cue { display: grid; justify-items: center; align-items: center; min-height: 3rem; width: 100%; }
+.hf-nb__cueword {
+  grid-area: 1 / 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.875rem;
+  border: 2px solid var(--hf-ink);
+  border-radius: var(--hf-r-pill);
+  background: var(--hf-raised);
+  color: var(--hf-ink);
+  font: 700 var(--hf-t-xl)/1.1 var(--hf-font);
+  letter-spacing: 0.06em;
+  visibility: hidden;
+}
+.hf-nb__cueword[data-cue="where"] { border-style: dashed; color: var(--hf-sel-ink); border-color: var(--hf-sel-ink); }
+.hf-nb__cueword.is-on { visibility: visible; }
+.hf-nb__cue-icon { width: 1.5rem; height: 1.5rem; flex: none; }
+
+/* Grid (grid8, ring8, Dual positions, Switch) */
+.hf-nb__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.375rem, 1.6vmin, 0.75rem);
+  width: var(--hf-nb-size);
+  aspect-ratio: 1 / 1;
+}
+.hf-nb__cell {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  border: 2px solid var(--hf-line);
+  border-radius: var(--hf-r-md);
+  background: var(--hf-surface);
+}
+.hf-nb__cell.is-on { background: var(--hf-sel); border-color: var(--hf-sel); }
+.hf-nb__cell--mid { background: transparent; border-color: transparent; }
+.hf-nb__fix { position: relative; width: 1.25rem; height: 1.25rem; }
+.hf-nb__fix::before,
+.hf-nb__fix::after { content: ''; position: absolute; background: var(--hf-ink-3); border-radius: 1px; }
+.hf-nb__fix::before { left: 0; right: 0; top: calc(50% - 1px); height: 2px; }
+.hf-nb__fix::after { top: 0; bottom: 0; left: calc(50% - 1px); width: 2px; }
+.hf-nb__in { visibility: hidden; display: grid; place-items: center; width: 100%; height: 100%; color: var(--hf-ink); }
+.hf-nb__cell.is-on .hf-nb__in { visibility: visible; }
+/* Switch: the item sits in its cell; the cell is framed, not filled, so the item stays readable */
+.hf-nb[data-fmt="switch"] .hf-nb__cell.is-on { background: var(--hf-raised); border: 3px solid var(--hf-ink); }
+.hf-nb[data-fmt="switch"] .hf-nb__in .hf-nb__txt { font-size: clamp(2rem, 8vmin, 3.75rem); }
+.hf-nb[data-fmt="switch"] .hf-nb__in .hf-nb__svg { width: 64%; height: 64%; }
+
+/* Card (text, expressions, shapes, glyphs, audio) */
+.hf-nb__card {
+  display: grid;
+  place-items: center;
+  width: min(100%, 38dvh, 22rem);
+  aspect-ratio: 1 / 1;
+  border: 2px solid var(--hf-line);
+  border-radius: var(--hf-r-xl);
+  background: var(--hf-surface);
+}
+.hf-nb__card[data-fmt="expr"] { aspect-ratio: 4 / 3; width: min(100%, 48dvh, 26rem); }
+.hf-nb__item { visibility: hidden; display: grid; place-items: center; width: 100%; height: 100%; color: var(--hf-ink); }
+.hf-nb__card.is-on { border-color: var(--hf-line-strong); background: var(--hf-raised); }
+.hf-nb__card.is-on .hf-nb__item { visibility: visible; }
+.hf-nb__card[data-fmt="audio"] .hf-nb__item { visibility: visible; color: var(--hf-ink-3); }
+.hf-nb__card[data-fmt="audio"].is-on { border-color: var(--hf-sel); }
+.hf-nb__card[data-fmt="audio"].is-on .hf-nb__item { color: var(--hf-sel-ink); }
+.hf-nb__card[data-fmt="audio"] .hf-nb__aud-icon { width: 38%; height: 38%; }
+.hf-nb__txt {
+  font: 700 clamp(3rem, 13vmin, 6rem)/1 var(--hf-font);
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.hf-nb__expr {
+  font: 700 clamp(2.5rem, 10vmin, 4.75rem)/1 var(--hf-font);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.hf-nb__svg { width: 58%; height: 58%; overflow: visible; }
+
+/* Memory tape (assist) */
+.hf-nb__tape { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; width: 100%; padding: 0.25rem 0 0.5rem; }
+.hf-nb__slots { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 3.25rem)); gap: 0.375rem; justify-content: center; width: 100%; }
+.hf-nb__slot {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1 / 1;
+  min-width: 0;
+  border: 2px solid var(--hf-line);
+  border-radius: var(--hf-r-sm);
+  background: var(--hf-raised);
+  color: var(--hf-ink);
+  font: 700 var(--hf-t-md)/1 var(--hf-font);
+  overflow: hidden;
+}
+.hf-nb__slot.is-empty { background: var(--hf-sunken); border-style: dotted; }
+.hf-nb__slot.is-compare { border: 3px dashed var(--hf-sel-ink); }
+.hf-nb__slot.is-next { border-color: var(--hf-ink); }
+.hf-nb__slot.is-next > * { visibility: hidden; }
+.hf-nb__slot.is-next.is-on > * { visibility: visible; }
+.hf-nb__slot .hf-nb__txt,
+.hf-nb__slot .hf-nb__expr { font-size: var(--hf-t-sm); }
+.hf-nb__slot .hf-nb__expr { font-size: var(--hf-t-xs); }
+.hf-nb__tapelabel { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.25rem 0.5rem; font-size: var(--hf-t-xs); color: var(--hf-ink-2); }
+.hf-nb__tapetag { font-weight: 700; color: var(--hf-sel-ink); }
+
+/* Small items (tape, rule-card examples) */
+.hf-nb__mini-grid { width: 1.75rem; height: 1.75rem; display: block; }
+.hf-nb__mini-off { fill: var(--hf-sunken); stroke: var(--hf-line-strong); stroke-width: 0.6; }
+.hf-nb__mini-on { fill: var(--hf-sel); stroke: var(--hf-sel); stroke-width: 0.6; }
+.hf-nb__mini-mid { fill: none; }
+.hf-nb__svg--mini { width: 1.5rem; height: 1.5rem; }
+.hf-nb__sw { display: inline-flex; align-items: center; gap: 0.125rem; }
+.hf-nb__sw .hf-nb__mini-grid { width: 1.125rem; height: 1.125rem; }
+.hf-nb__sw .hf-nb__txt { font-size: var(--hf-t-sm); }
+.hf-nb__dualmini { display: inline-flex; flex-direction: column; align-items: center; gap: 0.125rem; }
+.hf-nb__dualmini .hf-nb__mini-grid { width: 1.25rem; height: 1.25rem; }
+.hf-nb__aud { display: inline-flex; align-items: center; gap: 0.125rem; font-size: var(--hf-t-xs); color: var(--hf-ink-2); }
+.hf-nb__aud .hf-nb__aud-icon { width: 0.875rem; height: 0.875rem; }
+.hf-tape__cell .hf-nb__mini-grid { width: 1.75rem; height: 1.75rem; }
+.hf-tape__cell .hf-nb__svg--mini { width: 1.5rem; height: 1.5rem; }
+
+/* Pads below the stimulus */
+.hf-nb__pads { width: 100%; padding-top: 0.75rem; }
+
+/* Short screens (landscape phones): smaller stimulus, smaller pads */
+@media (max-height: 34em) {
+  .hf-nb { --hf-nb-size: min(100%, 40dvh, 20rem); }
+  .hf-nb__card { width: min(100%, 34dvh, 18rem); }
+  .hf-nb__pads .hf-pad { min-height: 3.5rem; }
+}
+
+/* Landscape phones (Phase 4, PQ-12): the square stimuli of Relations and visual search stand beside their rule and
+   pads (css/views.css), so the layer may use the screen's width. Visual search needs its 360 px field: there the chip
+   and the pause button float at the top right, beside the field, instead of taking a row above it. */
+@media (orientation: landscape) and (max-height: 32em) {
+  .hf-play { padding-bottom: max(0.5rem, env(safe-area-inset-bottom)); }
+  .hf-play[data-view="relations"] .hf-play__top,
+  .hf-play[data-view="relations"] .hf-play__view,
+  .hf-play[data-view="vsearch"] .hf-play__view { max-width: 60rem; }
+  .hf-play[data-view="vsearch"] .hf-play__top {
+    position: absolute;
+    top: max(0.5rem, env(safe-area-inset-top));
+    right: max(1rem, env(safe-area-inset-right));
+    z-index: 1;
+    width: auto;
+    max-width: calc(100% - 26rem);
+  }
+}
+
+/* Forced colours: lit cells and the item stay visible */
+@media (forced-colors: active) {
+  .hf-nb__cell, .hf-nb__card, .hf-nb__slot { border-color: CanvasText; }
+  .hf-nb__cell.is-on { forced-color-adjust: none; background: Highlight; border-color: Highlight; }
+  .hf-nb[data-fmt="switch"] .hf-nb__cell.is-on { background: Canvas; border-color: Highlight; border-width: 4px; }
+  .hf-nb__mini-on { fill: Highlight; }
+  .hf-nb__fix::before, .hf-nb__fix::after { background: CanvasText; }
+  .hf-play__count { border-color: CanvasText; }
+}
+
+/* 3. Session screen ========================================================================= */
+
+.hf-sess { display: flex; flex-direction: column; gap: var(--hf-sp-4); }
+.hf-sess__head { display: flex; align-items: flex-start; gap: var(--hf-sp-4); }
+.hf-sess__head[hidden] { display: none; }
+.hf-sess__bar { flex: 1 1 auto; min-width: 0; }
+.hf-sess__end.hf-btn { flex: none; }
+.hf-sess__notes { display: flex; flex-direction: column; gap: var(--hf-sp-2); }
+.hf-sess__notes:empty { display: none; }
+.hf-sess__stage { min-width: 0; }
+.hf-sess__pick { display: flex; flex-direction: column; gap: var(--hf-sp-4); padding: var(--hf-sp-5); }
+.hf-sess__lvls { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; border-top: 1px solid var(--hf-line); }
+.hf-sess__lvl { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.25rem 1rem; padding: 0.625rem 0; border-bottom: 1px solid var(--hf-line); }
+.hf-sess__lvl-name { font-weight: 600; }
+.hf-sess__lvl-move { display: inline-flex; align-items: center; gap: 0.375rem; color: var(--hf-ink-2); font-variant-numeric: tabular-nums; }
+.hf-sess__lvl-move .hf-icon { width: 1.125rem; height: 1.125rem; }
+.hf-sess__lvl-move.is-up { color: var(--hf-good-text); }
+.hf-sess__reflect { display: flex; flex-direction: column; gap: var(--hf-sp-2); }
+.hf-sess__note { width: 100%; max-width: var(--hf-measure); min-height: 5rem; resize: vertical; }
+.hf-sess__next { color: var(--hf-ink-2); max-width: var(--hf-measure); }
+.hf-sess__share:empty { display: none; }
+.hf-sess--summary { gap: var(--hf-sp-5); }
